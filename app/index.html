@@ -683,7 +683,7 @@ function vLibertad() {
 
 function vPerfil() {
   const li = levelInfo(S.xp);
-  const CUR = ["USD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"];
+  const CUR = ["USD", "CAD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"];
   return `<div class="stack">
     <section class="card">
       <div class="row"><div><p class="label">Nivel ${li.n} · ${S.xp} XP</p><h2>${esc(li.title)}</h2></div></div>
@@ -821,7 +821,7 @@ function onboarding() {
     <p class="muted small">Tus datos se guardan solo en este dispositivo.</p>
     <form id="ob">
       <label class="f">¿Cómo te llamas?<input id="oname" required autocomplete="given-name"></label>
-      <label class="f">Moneda<select id="ocur">${["USD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"].map(c => `<option>${c}</option>`).join("")}</select></label>
+      <label class="f">Moneda<select id="ocur">${["USD", "CAD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"].map(c => `<option>${c}</option>`).join("")}</select></label>
       <div class="btn-row"><button class="primary">Comenzar</button><button type="button" class="ghost" data-close>Seguir viendo el ejemplo</button></div>
     </form>`, (m, close) => {
     $("#ob", m).onsubmit = e => {
