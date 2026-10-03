@@ -102,7 +102,7 @@ p { margin: 0; }
 .journey .walker { position: absolute; top: 0; transform: translateX(-50%); transition: left .8s cubic-bezier(.2,.8,.2,1); }
 .journey .walker span { display: block; background: var(--ink); color: var(--bg); font-weight: 800; font-size: .72rem; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
 .stat { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.stat strong { font-family: var(--f-display); font-size: 1.02rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat strong { font-family: var(--f-display); font-size: 1.02rem; font-weight: 700; overflow-wrap: normal; word-break: normal; hyphens: none; }
 
 /* XP */
 .xpbar { height: 8px; background: var(--xp-soft); border-radius: 99px; overflow: hidden; }
@@ -202,6 +202,12 @@ nav.tabs button[aria-current="page"] { color: var(--ink); background: var(--surf
 .levelup .badge { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; background: var(--sun); color: var(--sun-ink); font-family: var(--f-display); font-size: 2.6rem; font-weight: 800; animation: pop .5s cubic-bezier(.2,1.6,.4,1); }
 .empty { text-align: center; padding: 24px 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; align-items: center; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+.top-right { display: flex; align-items: center; gap: 8px; }
+.lang-btn { min-height: 36px; padding: 6px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: .78rem; letter-spacing: .06em; }
+button.link { background: none; border: 0; padding: 0; min-height: 0; color: var(--xp); font-weight: 700; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.lvl-chip { min-height: 36px; }
+.brand h1 { white-space: nowrap; }
+@media (max-width: 440px) { .lvl-chip span { display: none; } .lvl-chip { padding-right: 4px; } }
 </style>
 </head>
 <body>
@@ -216,24 +222,27 @@ nav.tabs button[aria-current="page"] { color: var(--ink); background: var(--surf
       <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="38" r="16" fill="var(--sun)"/><rect x="4" y="38" width="56" height="22" fill="var(--bg)"/><path d="M4 40h56" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/><path d="M32 8v8M12 18l6 6M52 18l-6 6" stroke="var(--sun)" stroke-width="4" stroke-linecap="round"/><path d="M14 50h36M22 58h20" stroke="var(--xp)" stroke-width="4" stroke-linecap="round"/></svg>
       <h1>Free Dream</h1>
     </div>
-    <button class="lvl-chip" id="lvlChip" aria-label="Ver nivel y logros"><b id="lvlNum">1</b><span id="lvlTitle">Soñador</span></button>
+    <div class="top-right">
+      <button class="lang-btn" id="langBtn" aria-label="Idioma / Language / Langue">ES</button>
+      <button class="lvl-chip" id="lvlChip"><b id="lvlNum">1</b><span id="lvlTitle"></span></button>
+    </div>
   </header>
 
   <div class="demo-banner" id="demoBanner" hidden>
-    <span>Estás viendo <b>datos de ejemplo</b>. Juega con ellos o empieza con los tuyos.</span>
-    <button class="btn-sm primary" id="startOwn">Empezar con mis datos</button>
+    <span id="demoText"></span>
+    <button class="btn-sm primary" id="startOwn"></button>
   </div>
 
   <main id="view"></main>
 </div>
 
-<nav class="tabs" aria-label="Secciones">
+<nav class="tabs" id="tabs">
   <div class="in">
-    <button data-tab="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
-    <button data-tab="deudas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Deudas</button>
-    <button data-tab="movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></svg>Movimientos</button>
-    <button data-tab="libertad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Libertad</button>
-    <button data-tab="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Perfil</button>
+    <button data-tab="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span></span></button>
+    <button data-tab="deudas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><span></span></button>
+    <button data-tab="movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></svg><span></span></button>
+    <button data-tab="libertad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span></span></button>
+    <button data-tab="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg><span></span></button>
   </div>
 </nav>
 
@@ -278,31 +287,99 @@ function save() {
   }, 150);
 }
 
+/* ---------- Idiomas ---------- */
+// Las claves son el texto en español; I18N.en / I18N.fr tienen las traducciones.
+let LANG = "es";
+const LOCALE = { es: "es", en: "en-CA", fr: "fr-CA" };
+const LANG_NAMES = { es: "Español", en: "English", fr: "Français" };
+function t(s, vars) {
+  let out = (LANG !== "es" && I18N[LANG] && I18N[LANG][s]) || s;
+  if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
+  return out;
+}
+const nMonths = n => t(n === 1 ? "{n} mes" : "{n} meses", { n });
+function detectLang() {
+  const l = ((navigator.languages && navigator.languages[0]) || navigator.language || "es").slice(0, 2).toLowerCase();
+  return ["es", "en", "fr"].includes(l) ? l : "es";
+}
+
 /* ---------- Utilidades ---------- */
 const $ = (s, el = document) => el.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const today = () => new Date().toISOString().slice(0, 10);
 const monthKey = d => String(d).slice(0, 7);
-const addMonths = (d, n) => { const x = new Date(d.getFullYear(), d.getMonth() + n, 1); return x; };
-const fmtMonth = d => d.toLocaleDateString("es", { month: "long", year: "numeric" });
+const addMonths = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, 1);
+const fmtMonth = d => d.toLocaleDateString(LOCALE[LANG], { month: "long", year: "numeric" });
+const fmtDate = (s, o) => new Date(s + "T12:00").toLocaleDateString(LOCALE[LANG], o);
 function money(n, compact) {
-  const cur = S?.profile?.currency || "USD";
+  const cur = S?.profile?.currency || "CAD";
   try {
-    return new Intl.NumberFormat("es", { style: "currency", currency: cur, maximumFractionDigits: compact || Math.abs(n) >= 10000 ? 0 : 2, notation: (compact === "k" && Math.abs(n) >= 10000) || (compact && Math.abs(n) >= 100000) ? "compact" : "standard" }).format(n || 0);
+    return new Intl.NumberFormat(LOCALE[LANG], { style: "currency", currency: cur, maximumFractionDigits: compact || Math.abs(n) >= 10000 ? 0 : 2, notation: (compact === "k" && Math.abs(n) >= 10000) || (compact && Math.abs(n) >= 100000) ? "compact" : "standard" }).format(n || 0);
   } catch (e) { return (n || 0).toFixed(0) + " " + cur; }
 }
+const pct = (x, d = 1) => new Intl.NumberFormat(LOCALE[LANG], { style: "percent", maximumFractionDigits: d }).format(x || 0);
 const num = v => { const x = parseFloat(String(v).replace(",", ".")); return isFinite(x) ? x : 0; };
 
+/* ---------- Deducciones de nómina en Canadá (estimación) ---------- */
+// Valores aproximados 2025-2026. No incluye créditos personales, RRSP, pensiones de empresa ni beneficios.
+const PROVS = {
+  AB: { n: "Alberta", bpa: 22323, b: [[60000, .08], [151234, .10], [181481, .12], [241974, .13], [362961, .14], [Infinity, .15]] },
+  BC: { n: "British Columbia", bpa: 12932, b: [[49279, .0506], [98560, .077], [113158, .105], [137407, .1229], [186306, .147], [259829, .168], [Infinity, .205]] },
+  MB: { n: "Manitoba", bpa: 15780, b: [[47000, .108], [100000, .1275], [Infinity, .174]] },
+  NB: { n: "New Brunswick", bpa: 13396, b: [[51306, .094], [102614, .14], [190060, .16], [Infinity, .195]] },
+  NL: { n: "Newfoundland and Labrador", bpa: 11067, b: [[44192, .087], [88382, .145], [157792, .158], [220910, .178], [282214, .198], [564429, .208], [1128858, .213], [Infinity, .218]] },
+  NS: { n: "Nova Scotia", bpa: 11744, b: [[30507, .0879], [61015, .1495], [95883, .1667], [154650, .175], [Infinity, .21]] },
+  NT: { n: "Northwest Territories", bpa: 17842, b: [[51964, .059], [103930, .086], [168967, .122], [Infinity, .1405]] },
+  NU: { n: "Nunavut", bpa: 19274, b: [[54707, .04], [109413, .07], [177881, .09], [Infinity, .115]] },
+  ON: { n: "Ontario", bpa: 12747, b: [[52886, .0505], [105775, .0915], [150000, .1116], [220000, .1216], [Infinity, .1316]] },
+  PE: { n: "Prince Edward Island", bpa: 14250, b: [[33328, .095], [64656, .1347], [105000, .166], [140000, .1762], [Infinity, .19]] },
+  QC: { n: "Québec", bpa: 18571, b: [[53255, .14], [106495, .19], [129590, .24], [Infinity, .2575]] },
+  SK: { n: "Saskatchewan", bpa: 19491, b: [[53463, .105], [152750, .125], [Infinity, .145]] },
+  YT: { n: "Yukon", bpa: 16452, b: [[58523, .064], [117045, .09], [181440, .109], [500000, .128], [Infinity, .15]] }
+};
+const FED = { bpa: 16452, cea: 1501, b: [[58523, .14], [117045, .205], [181440, .26], [258482, .29], [Infinity, .33]] };
+function bracketTax(income, b) {
+  let tax = 0, prev = 0;
+  for (const [top, rate] of b) { if (income <= prev) break; tax += (Math.min(income, top) - prev) * rate; prev = top; }
+  return tax;
+}
+function caPayroll(gross, code) {
+  const P = PROVS[code]; if (!P || gross <= 0) return null;
+  const qc = code === "QC";
+  const YMPE = 74600, YAMPE = 85000, EXEMPT = 3500;
+  const pensRate = qc ? .064 : .0595;
+  const pens1 = Math.max(0, Math.min(gross, YMPE) - EXEMPT) * pensRate;
+  const pens2 = Math.max(0, Math.min(gross, YAMPE) - YMPE) * .04;
+  const pension = pens1 + pens2;
+  const pensBase = pens1 * (4.95 / (pensRate * 100)); // parte "base" que da crédito; el resto se deduce del ingreso
+  const ei = Math.min(gross, 68900) * (qc ? .0131 : .0163);
+  const qpip = qc ? Math.min(gross, 98000) * .00494 : 0;
+  const taxable = Math.max(0, gross - (pens1 - pensBase) - pens2);
+  let fed = bracketTax(taxable, FED.b) - FED.b[0][1] * (FED.bpa + Math.min(FED.cea, gross) + pensBase + ei + qpip);
+  fed = Math.max(0, fed);
+  if (qc) fed *= (1 - .165);
+  let prov = bracketTax(taxable, P.b) - P.b[0][1] * (P.bpa + (qc ? 0 : pensBase + ei));
+  prov = Math.max(0, prov);
+  if (code === "ON") {
+    const sur = Math.max(0, prov - 5710) * .2 + Math.max(0, prov - 7307) * .36;
+    const i = taxable;
+    const hp = i <= 20000 ? 0 : i <= 36000 ? Math.min(300, (i - 20000) * .06) : i <= 48000 ? 300 + Math.min(150, (i - 36000) * .06) : i <= 72000 ? 450 + Math.min(150, (i - 48000) * .25) : i <= 200000 ? 600 + Math.min(150, (i - 72000) * .25) : 750 + Math.min(150, (i - 200000) * .25);
+    prov += sur + hp;
+  }
+  const total = fed + prov + pension + ei + qpip;
+  return { gross, fed, prov, pension, ei, qpip, total, net: gross - total, rate: total / gross, qc };
+}
+
 /* ---------- Datos de ejemplo ---------- */
-function sampleState() {
+function sampleState(lang) {
   const now = new Date();
-  const d = (mBack, day) => { const x = new Date(now.getFullYear(), now.getMonth() - mBack, day); return x.toISOString().slice(0, 10); };
+  const d = (mBack, day) => new Date(now.getFullYear(), now.getMonth() - mBack, day).toISOString().slice(0, 10);
   const debts = [
-    { id: "d1", name: "Tarjeta Visa", kind: "Tarjeta de crédito", original: 2400, balance: 1610, apr: 28, minPay: 75, createdAt: d(4, 1) },
-    { id: "d2", name: "Préstamo del coche", kind: "Préstamo", original: 8500, balance: 7740, apr: 9, minPay: 260, createdAt: d(4, 1) },
-    { id: "d3", name: "Crédito estudiantil", kind: "Préstamo", original: 5200, balance: 4950, apr: 5.5, minPay: 90, createdAt: d(4, 1) },
-    { id: "d4", name: "Préstamo de mamá", kind: "Familiar", original: 300, balance: 0, apr: 0, minPay: 50, createdAt: d(4, 1), paidAt: d(1, 20) }
+    { id: "d1", name: "Visa", kind: "Tarjeta de crédito", original: 2400, balance: 1610, apr: 20.99, minPay: 75, createdAt: d(4, 1) },
+    { id: "d2", name: t("Préstamo del coche"), kind: "Préstamo", original: 8500, balance: 7740, apr: 8.5, minPay: 260, createdAt: d(4, 1) },
+    { id: "d3", name: t("Préstamo estudiantil"), kind: "Préstamo", original: 5200, balance: 4950, apr: 6.2, minPay: 90, createdAt: d(4, 1) },
+    { id: "d4", name: t("Préstamo familiar"), kind: "Familiar", original: 300, balance: 0, apr: 0, minPay: 50, createdAt: d(4, 1), paidAt: d(1, 20) }
   ];
   const payments = [
     { id: "p1", debtId: "d1", amount: 300, date: d(3, 5) }, { id: "p2", debtId: "d2", amount: 260, date: d(3, 10) },
@@ -310,32 +387,33 @@ function sampleState() {
     { id: "p6", debtId: "d1", amount: 240, date: d(1, 5) }, { id: "p7", debtId: "d2", amount: 240, date: d(1, 10) }, { id: "p8", debtId: "d4", amount: 150, date: d(1, 20) }, { id: "p9", debtId: "d3", amount: 250, date: d(1, 22) }
   ];
   const txns = [
-    { id: "t1", type: "ingreso", amount: 2800, category: "Salario", note: "Nómina", date: d(0, 1) },
-    { id: "t2", type: "gasto", amount: 850, category: "Vivienda", note: "Alquiler", date: d(0, 2) },
-    { id: "t3", type: "gasto", amount: 142.6, category: "Comida", note: "Supermercado", date: d(0, 3) },
-    { id: "t4", type: "gasto", amount: 60, category: "Transporte", note: "Gasolina", date: d(0, 3) },
-    { id: "t5", type: "gasto", amount: 38.9, category: "Ocio", note: "Cine y cena", date: d(0, 2) },
-    { id: "t6", type: "gasto", amount: 75, category: "Servicios", note: "Luz e internet", date: d(0, 1) }
+    { id: "t1", type: "ingreso", amount: 1580, category: "Salario", note: t("Nómina"), date: d(0, 1) },
+    { id: "t2", type: "gasto", amount: 1450, category: "Vivienda", note: t("Alquiler"), date: d(0, 1) },
+    { id: "t3", type: "gasto", amount: 142.6, category: "Comida", note: t("Supermercado"), date: d(0, 3) },
+    { id: "t4", type: "gasto", amount: 60, category: "Transporte", note: t("Gasolina"), date: d(0, 3) },
+    { id: "t5", type: "gasto", amount: 38.9, category: "Ocio", note: t("Cine y cena"), date: d(0, 2) },
+    { id: "t6", type: "gasto", amount: 95, category: "Servicios", note: t("Luz e internet"), date: d(0, 1) }
   ];
   return {
-    v: 1, demo: true,
-    profile: { name: "Ejemplo", currency: "USD" },
+    v: 2, demo: true,
+    profile: { name: "", currency: "CAD", province: "ON", lang },
     plan: { strategy: "avalanche", budget: 650 },
     debts, payments, txns, xp: 640,
     recurring: [
-      { id: "r1", kind: "ingreso", name: "Salario", amount: 24, freq: "hora", hours: 40, category: "Salario" },
-      { id: "r2", kind: "ingreso", name: "Trabajos de fin de semana", amount: 300, freq: "mes", category: "Extra" },
-      { id: "r3", kind: "gasto", name: "Alquiler", amount: 850, freq: "mes", category: "Vivienda" },
-      { id: "r4", kind: "gasto", name: "Seguro del coche", amount: 1440, freq: "año", category: "Transporte" },
-      { id: "r5", kind: "gasto", name: "Netflix", amount: 16.49, freq: "mes", category: "Suscripciones", ant: true },
+      { id: "r1", kind: "ingreso", name: t("Salario"), amount: 26, freq: "hora", hours: 40, category: "Salario", gross: true },
+      { id: "r2", kind: "ingreso", name: t("Trabajos de fin de semana"), amount: 300, freq: "mes", category: "Extra", gross: false },
+      { id: "r3", kind: "gasto", name: t("Alquiler"), amount: 1450, freq: "mes", category: "Vivienda" },
+      { id: "r4", kind: "gasto", name: t("Seguro del coche"), amount: 1800, freq: "año", category: "Transporte" },
+      { id: "r5", kind: "gasto", name: "Netflix", amount: 18.99, freq: "mes", category: "Suscripciones", ant: true },
       { id: "r6", kind: "gasto", name: "Spotify", amount: 11.99, freq: "mes", category: "Suscripciones", ant: true },
-      { id: "r7", kind: "gasto", name: "Café de la mañana", amount: 4.5, freq: "dia", category: "Comida", ant: true },
-      { id: "r8", kind: "gasto", name: "Delivery", amount: 25, freq: "semana", category: "Comida", ant: true }
-    ], ach: { first_payment: d(3, 5), plan: d(4, 1), p10: d(2, 5), debt_killed: d(1, 20), streak3: d(1, 22), p25: d(1, 22) }
+      { id: "r7", kind: "gasto", name: t("Café de la mañana"), amount: 3.5, freq: "dia", category: "Comida", ant: true },
+      { id: "r8", kind: "gasto", name: "Uber Eats", amount: 30, freq: "semana", category: "Comida", ant: true }
+    ],
+    ach: { first_payment: d(3, 5), plan: d(4, 1), p10: d(2, 5), debt_killed: d(1, 20), streak3: d(1, 22), p25: d(1, 22) }
   };
 }
-function emptyState(name, currency) {
-  return { v: 1, demo: false, profile: { name, currency }, plan: { strategy: "avalanche", budget: 0 }, debts: [], payments: [], txns: [], recurring: [], xp: 0, ach: {} };
+function emptyState(name, currency, province, lang) {
+  return { v: 2, demo: false, profile: { name, currency, province, lang }, plan: { strategy: "avalanche", budget: 0 }, debts: [], payments: [], txns: [], recurring: [], xp: 0, ach: {} };
 }
 
 /* ---------- Juego: niveles, XP, logros ---------- */
@@ -344,7 +422,7 @@ const xpFor = n => 50 * n * (n - 1); // XP total para alcanzar el nivel n
 function levelInfo(xp) {
   let n = 1; while (xp >= xpFor(n + 1)) n++;
   const base = xpFor(n), next = xpFor(n + 1);
-  return { n, title: TITLES[Math.min(n - 1, TITLES.length - 1)], into: xp - base, need: next - base, pct: (xp - base) / (next - base) };
+  return { n, title: t(TITLES[Math.min(n - 1, TITLES.length - 1)]), into: xp - base, need: next - base, pct: (xp - base) / (next - base) };
 }
 const ACH = [
   { id: "plan", e: "🗺️", t: "Plan trazado", d: "Registra 2 o más deudas" },
@@ -361,10 +439,7 @@ const ACH = [
   { id: "ants", e: "🐜", t: "Cazahormigas", d: "Identifica 3 gastos hormiga" },
   { id: "free", e: "🕊️", t: "¡LIBRE!", d: "Deuda total en cero" }
 ];
-const CHEERS = [
-  "¡Cada pago te acerca a la libertad!", "¡Eso es! Un golpe más contra la deuda.", "Tu yo del futuro te lo agradece.",
-  "¡Constancia de campeón!", "Menos intereses, más sueños.", "¡Vas ganando la partida!", "Paso a paso se llega lejos."
-];
+const CHEERS = ["¡Cada pago te acerca a la libertad!", "¡Eso es! Un golpe más contra la deuda.", "Tu yo del futuro te lo agradece.", "¡Constancia de campeón!", "Menos intereses, más sueños.", "¡Vas ganando la partida!", "Paso a paso se llega lejos."];
 
 function totals() {
   const orig = S.debts.reduce((a, d) => a + d.original, 0);
@@ -374,10 +449,10 @@ function totals() {
 }
 function streak() {
   const months = new Set(S.payments.map(p => monthKey(p.date)));
-  let d = new Date(), n = 0;
   const key = x => x.toISOString().slice(0, 7);
+  const d = new Date(); let n = 0;
   let cur = new Date(d.getFullYear(), d.getMonth(), 15);
-  if (!months.has(key(cur))) cur = addMonths(cur, -1), cur.setDate(15);
+  if (!months.has(key(cur))) { cur = addMonths(cur, -1); cur.setDate(15); }
   while (months.has(key(cur))) { n++; cur = addMonths(cur, -1); cur.setDate(15); }
   return n;
 }
@@ -389,24 +464,24 @@ function gainXP(amount, reason) {
   if (after.n > before) setTimeout(() => levelUp(after), 700);
 }
 function checkAchievements() {
-  const t = totals(), s = streak();
+  const tt = totals(), s = streak();
   const cond = {
     plan: S.debts.length >= 2,
     first_payment: S.payments.length > 0,
-    p10: t.pct >= .10, p25: t.pct >= .25, p50: t.pct >= .5, p75: t.pct >= .75,
+    p10: tt.pct >= .10, p25: tt.pct >= .25, p50: tt.pct >= .5, p75: tt.pct >= .75,
     debt_killed: S.debts.some(d => d.balance <= 0 && d.original > 0),
     streak3: s >= 3, streak6: s >= 6,
     tracker: S.txns.length >= 10,
     budget_map: S.recurring.some(r => r.kind === "ingreso") && S.recurring.filter(r => r.kind === "gasto").length >= 3,
     ants: S.recurring.filter(r => r.ant).length >= 3,
-    free: S.debts.length > 0 && t.bal <= 0
+    free: S.debts.length > 0 && tt.bal <= 0
   };
   let delay = 900;
   for (const a of ACH) {
     if (cond[a.id] && !S.ach[a.id]) {
       S.ach[a.id] = today();
       S.xp += 50;
-      setTimeout(() => { toast(`Logro desbloqueado: <b>${a.e} ${a.t}</b> <span class="xp">+50 XP</span>`); confetti(60); }, delay);
+      setTimeout(() => { toast(`${t("Logro desbloqueado")}: <b>${a.e} ${t(a.t)}</b> <span class="xp">+50 XP</span>`); confetti(60); }, delay);
       delay += 900;
     }
   }
@@ -416,35 +491,52 @@ function checkAchievements() {
 const FREQ = { hora: "por hora", dia: "al día", semana: "a la semana", quincena: "cada 2 semanas", mes: "al mes", año: "al año" };
 function monthly(r) {
   const f = { hora: (r.hours || 40) * 52 / 12, dia: 365 / 12, semana: 52 / 12, quincena: 26 / 12, mes: 1, año: 1 / 12 }[r.freq] || 1;
-  return r.amount * f;
+  return (r.amount || 0) * f;
 }
+// Deducciones estimadas sobre el total bruto anual (los impuestos son progresivos, por eso se calculan juntos)
+function taxInfo() {
+  const grossItems = (S.recurring || []).filter(r => r.kind === "ingreso" && r.gross);
+  const grossAnnual = grossItems.reduce((a, r) => a + monthly(r) * 12, 0);
+  const P = S.profile;
+  if (!grossAnnual) return { grossAnnual: 0, factor: 1, mode: "none" };
+  if (P.province && PROVS[P.province]) {
+    const est = caPayroll(grossAnnual, P.province);
+    return { grossAnnual, factor: est.net / grossAnnual, mode: "ca", est };
+  }
+  if (P.manualRate > 0) return { grossAnnual, factor: 1 - P.manualRate / 100, mode: "manual" };
+  return { grossAnnual, factor: 1, mode: "missing" };
+}
+function netMonthly(r, tx) { return r.kind === "ingreso" && r.gross ? monthly(r) * tx.factor : monthly(r); }
 function flow() {
-  const R = S.recurring || [];
+  const R = S.recurring || [], tx = taxInfo();
+  const incItems = R.filter(r => r.kind === "ingreso");
+  const grossInc = incItems.reduce((a, r) => a + monthly(r), 0);
+  const inc = incItems.reduce((a, r) => a + netMonthly(r, tx), 0);
   const sum = arr => arr.reduce((a, r) => a + monthly(r), 0);
-  const inc = sum(R.filter(r => r.kind === "ingreso"));
   const fixed = sum(R.filter(r => r.kind === "gasto" && !r.ant));
   const ants = sum(R.filter(r => r.kind === "gasto" && r.ant));
   const mins = S.debts.filter(d => d.balance > 0).reduce((a, d) => a + d.minPay, 0);
-  return { inc, fixed, ants, mins, free: inc - fixed - ants };
+  return { inc, grossInc, ded: grossInc - inc, tx, fixed, ants, mins, free: inc - fixed - ants };
 }
 const PRESETS = [
-  { name: "Netflix", amount: 16.49, freq: "mes", category: "Suscripciones", e: "📺" },
+  { name: "Netflix", amount: 18.99, freq: "mes", category: "Suscripciones", e: "📺" },
   { name: "Spotify", amount: 11.99, freq: "mes", category: "Suscripciones", e: "🎧" },
   { name: "Disney+", amount: 11.99, freq: "mes", category: "Suscripciones", e: "🏰" },
   { name: "Amazon Prime", amount: 9.99, freq: "mes", category: "Suscripciones", e: "📦" },
+  { name: "Crave", amount: 22, freq: "mes", category: "Suscripciones", e: "🎬" },
   { name: "YouTube Premium", amount: 13.99, freq: "mes", category: "Suscripciones", e: "▶️" },
   { name: "iCloud", amount: 3.99, freq: "mes", category: "Suscripciones", e: "☁️" },
   { name: "Xbox / PlayStation", amount: 17.99, freq: "mes", category: "Suscripciones", e: "🎮" },
-  { name: "Café", amount: 4.5, freq: "dia", category: "Comida", e: "☕" },
-  { name: "Delivery", amount: 25, freq: "semana", category: "Comida", e: "🛵" },
-  { name: "Snacks y antojos", amount: 3, freq: "dia", category: "Comida", e: "🍫" },
-  { name: "Gimnasio", amount: 45, freq: "mes", category: "Salud", e: "🏋️" },
-  { name: "Apps y juegos", amount: 10, freq: "mes", category: "Ocio", e: "📱" }
+  { name: "Tim Hortons", amount: 3.5, freq: "dia", category: "Comida", e: "☕" },
+  { name: "Uber Eats / DoorDash", amount: 30, freq: "semana", category: "Comida", e: "🛵" },
+  { name: "Snacks", amount: 3, freq: "dia", category: "Comida", e: "🍫" },
+  { name: "Gym", amount: 50, freq: "mes", category: "Salud", e: "🏋️" },
+  { name: "Apps", amount: 10, freq: "mes", category: "Ocio", e: "📱" }
 ];
 
 /* ---------- Simulación del plan de pago ---------- */
 function simulate(debts, budget, strategy) {
-  let ds = debts.filter(d => d.balance > 0.005).map(d => ({ id: d.id, name: d.name, bal: d.balance, r: d.apr / 100 / 12, min: Math.max(d.minPay, 0) }));
+  const ds = debts.filter(d => d.balance > 0.005).map(d => ({ id: d.id, bal: d.balance, r: d.apr / 100 / 12, min: Math.max(d.minPay, 0) }));
   const minSum = ds.reduce((a, d) => a + d.min, 0);
   const pay = Math.max(budget || 0, minSum);
   const order = () => ds.filter(d => d.bal > 0.005).sort((a, b) => strategy === "snowball" ? a.bal - b.bal || b.r - a.r : b.r - a.r || a.bal - b.bal);
@@ -461,8 +553,7 @@ function simulate(debts, budget, strategy) {
     if (month > 24 && series[month] >= series[month - 12]) { stuck = true; break; }
   }
   if (month >= 600) stuck = true;
-  const target = order()[0];
-  return { months: month, interest, payoff, series, stuck, pay, minSum, targetId: target ? target.id : null };
+  return { months: month, interest, payoff, series, stuck, pay, minSum };
 }
 function bossId() {
   const live = S.debts.filter(d => d.balance > 0);
@@ -485,11 +576,11 @@ function modal(html, onMount) {
   m.addEventListener("click", e => { if (e.target === m || e.target.closest("[data-close]")) close(); });
   function close() { root.innerHTML = ""; }
   onMount && onMount(m, close);
-  const f = m.querySelector("input, select, button.primary"); f && f.focus();
+  const f = m.querySelector("input:not([type=checkbox]), button.primary"); f && matchMedia("(hover: hover)").matches && f.focus();
   return close;
 }
 function confirmBox(text, okLabel, fn) {
-  modal(`<h3>${esc(text)}</h3><div class="btn-row"><button class="danger" id="ok">${esc(okLabel)}</button><button class="ghost" data-close>Cancelar</button></div>`, (m, close) => {
+  modal(`<h3>${esc(text)}</h3><div class="btn-row"><button class="danger" id="ok">${esc(okLabel)}</button><button class="ghost" data-close>${t("Cancelar")}</button></div>`, (m, close) => {
     $("#ok", m).onclick = () => { close(); fn(); };
   });
 }
@@ -500,16 +591,16 @@ function confetti(n = 140) {
   const cs = getComputedStyle(document.documentElement);
   const colors = ["--sun", "--xp", "--debt", "--good"].map(v => cs.getPropertyValue(v).trim());
   const P = Array.from({ length: n }, () => ({ x: W / 2 + (Math.random() - .5) * 80, y: H * .35, vx: (Math.random() - .5) * 12, vy: -Math.random() * 12 - 4, s: 5 + Math.random() * 6, c: colors[Math.floor(Math.random() * 4)], r: Math.random() * 6, vr: (Math.random() - .5) * .4 }));
-  let t = 0;
+  let k = 0;
   (function f() {
     ctx.clearRect(0, 0, W, H);
     for (const p of P) { p.vy += .35; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.r += p.vr; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); }
-    if (++t < 110) requestAnimationFrame(f); else { ctx.clearRect(0, 0, W, H); c.hidden = true; }
+    if (++k < 110) requestAnimationFrame(f); else { ctx.clearRect(0, 0, W, H); c.hidden = true; }
   })();
 }
 function levelUp(info) {
   confetti(180);
-  modal(`<div class="stack levelup"><div class="badge">${info.n}</div><p class="label">¡Subiste de nivel!</p><h2>${esc(info.title)}</h2><p class="muted">Sigue así. Cada nivel es una prueba de que puedes con esto.</p><button class="primary" data-close>¡Vamos!</button></div>`);
+  modal(`<div class="stack levelup"><div class="badge">${info.n}</div><p class="label">${t("¡Subiste de nivel!")}</p><h2>${esc(info.title)}</h2><p class="muted">${t("Sigue así. Cada nivel es una prueba de que puedes con esto.")}</p><button class="primary" data-close>${t("¡Vamos!")}</button></div>`);
 }
 
 /* ---------- Gráficas SVG ---------- */
@@ -535,29 +626,39 @@ function linesChart(lines, years) {
   const max = Math.max(...lines.flatMap(l => l.pts), 1);
   const n = lines[0].pts.length - 1;
   const x = i => pl + (i / n) * (W - pl - pr), y = v => pt + (1 - v / max) * (H - pt - pb);
-  const tk = [0, 5, 10, 15, 20].filter(t => t <= years);
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Proyección de inversión a ${years} años">
+  const tk = [0, 5, 10, 15, 20].filter(k => k <= years);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("Proyección de inversión a {n} años", { n: years }))}">
     ${[.25, .5, .75].map(f => `<line x1="${pl}" x2="${W - pr}" y1="${y(max * f)}" y2="${y(max * f)}" stroke="var(--line)" stroke-dasharray="3 4"/>`).join("")}
     <line x1="${pl}" x2="${W - pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>
     ${lines.map(l => `<polyline points="${l.pts.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ")}" fill="none" stroke="${l.c}" stroke-width="${l.w || 2.5}" ${l.dash ? `stroke-dasharray="${l.dash}"` : ""} stroke-linejoin="round"/>`).join("")}
     ${lines.map(l => `<circle cx="${x(n)}" cy="${y(l.pts[n])}" r="4" fill="${l.c}"/>`).join("")}
-    ${tk.map(t => `<text x="${x(t * 12 / (years * 12) * n)}" y="${H - 6}" font-size="10" fill="var(--muted)" text-anchor="${t === 0 ? "start" : t === years ? "end" : "middle"}">${t === 0 ? "hoy" : t + " años"}</text>`).join("")}
+    ${tk.map(k => `<text x="${x(k / years * n)}" y="${H - 6}" font-size="10" fill="var(--muted)" text-anchor="${k === 0 ? "start" : k === years ? "end" : "middle"}">${k === 0 ? t("hoy") : t("{n} años", { n: k })}</text>`).join("")}
   </svg>`;
 }
 
 /* ---------- Vistas ---------- */
-function render() {
+const TAB_LABELS = { inicio: "Inicio", deudas: "Deudas", movimientos: "Movimientos", libertad: "Libertad", perfil: "Perfil" };
+function renderChrome() {
+  document.documentElement.lang = LANG;
   const li = levelInfo(S.xp);
   $("#lvlNum").textContent = li.n; $("#lvlTitle").textContent = li.title;
+  $("#lvlChip").setAttribute("aria-label", t("Ver nivel y logros"));
+  $("#langBtn").textContent = LANG.toUpperCase();
   $("#demoBanner").hidden = !S.demo;
-  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false"));
+  $("#demoText").innerHTML = t("Estás viendo <b>datos de ejemplo</b>. Juega con ellos o empieza con los tuyos.");
+  $("#startOwn").textContent = t("Empezar con mis datos");
+  $("#tabs").setAttribute("aria-label", t("Secciones"));
+  document.querySelectorAll("nav.tabs button").forEach(b => { b.querySelector("span").textContent = t(TAB_LABELS[b.dataset.tab]); b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false"); });
+}
+function render() {
+  renderChrome();
   const v = $("#view");
   v.innerHTML = ({ inicio: vInicio, deudas: vDeudas, movimientos: vMovs, libertad: vLibertad, perfil: vPerfil }[tab])();
   bind(v);
 }
 
 function vInicio() {
-  const t = totals(), li = levelInfo(S.xp), s = streak();
+  const tt = totals(), li = levelInfo(S.xp), s = streak();
   const sim = simulate(S.debts, S.plan.budget, S.plan.strategy);
   const boss = S.debts.find(d => d.id === bossId());
   const freeDate = addMonths(new Date(), sim.months);
@@ -565,60 +666,65 @@ function vInicio() {
   const mt = S.txns.filter(x => monthKey(x.date) === mk);
   const inc = mt.filter(x => x.type === "ingreso").reduce((a, x) => a + x.amount, 0);
   const out = mt.filter(x => x.type === "gasto").reduce((a, x) => a + x.amount, 0);
-  const hello = S.demo ? "Hola" : `Hola, ${esc(S.profile.name || "")}`;
+  const hello = S.demo || !S.profile.name ? t("Hola") : t("Hola, {name}", { name: esc(S.profile.name) });
   if (!S.debts.length) {
     return `<div class="stack">
-      <section class="hero"><p class="label">${hello}</p><h2>Tu viaje empieza aquí</h2><p class="muted">Agrega tus deudas para trazar el mapa hacia tu libertad financiera. Cada pago que registres te dará XP, logros y te acercará a la meta.</p>
-      <button class="primary" data-act="addDebt">Agregar mi primera deuda</button></section>
-      ${xpCard(li, s)}</div>`;
+      <section class="hero"><p class="label">${hello}</p><h2>${t("Tu viaje empieza aquí")}</h2><p class="muted">${t("Agrega tus deudas para trazar el mapa hacia tu libertad financiera. Cada pago que registres te dará XP, logros y te acercará a la meta.")}</p>
+      <button class="primary" data-act="addDebt">${t("Agregar mi primera deuda")}</button></section>
+      ${xpCard(li)}${flowCard()}</div>`;
   }
-  const pctTxt = Math.round(t.pct * 100);
   return `<div class="stack">
-    <section class="hero" aria-label="Progreso hacia la libertad">
-      <div class="row"><p class="label">${hello} · camino a la libertad</p><span class="pill ${t.bal <= 0 ? "done" : "boss"}">${t.bal <= 0 ? "¡Libre!" : pctTxt + " % pagado"}</span></div>
-      <div><p class="muted small">Te queda por pagar</p><p class="big num">${money(t.bal)}</p></div>
+    <section class="hero" aria-label="${t("Progreso hacia la libertad")}">
+      <div class="row"><p class="label">${hello} · ${t("camino a la libertad")}</p><span class="pill ${tt.bal <= 0 ? "done" : "boss"}">${tt.bal <= 0 ? t("¡Libre!") : t("{p} pagado", { p: pct(tt.pct, 0) })}</span></div>
+      <div><p class="muted small">${t("Te queda por pagar")}</p><p class="big num">${money(tt.bal)}</p></div>
       <div class="journey" aria-hidden="true">
-        <div class="track"><div class="fill" style="width:${(t.pct * 100).toFixed(1)}%"></div></div>
-        <div class="walker" style="left:${Math.min(92, Math.max(6, t.pct * 100))}%"><span>Tú</span></div>
+        <div class="track"><div class="fill" style="width:${(tt.pct * 100).toFixed(1)}%"></div></div>
+        <div class="walker" style="left:${Math.min(92, Math.max(6, tt.pct * 100))}%"><span>${t("Tú")}</span></div>
         <div class="flag">🏁</div>
       </div>
       <div class="grid3">
-        <div class="stat"><span class="label">Ya pagado</span><strong class="num">${money(t.paid, 1)}</strong></div>
-        <div class="stat"><span class="label">Libre en</span><strong class="num">${t.bal <= 0 ? "¡Ya!" : sim.stuck ? "—" : sim.months + " meses"}</strong></div>
-        <div class="stat"><span class="label">Racha</span><strong class="num">${s} ${s === 1 ? "mes" : "meses"} 🔥</strong></div>
+        <div class="stat"><span class="label">${t("Ya pagado")}</span><strong class="num">${money(tt.paid, 1)}</strong></div>
+        <div class="stat"><span class="label">${t("Libre en")}</span><strong class="num">${tt.bal <= 0 ? t("¡Ya!") : sim.stuck ? "—" : nMonths(sim.months)}</strong></div>
+        <div class="stat"><span class="label">${t("Racha")}</span><strong class="num">${nMonths(s)} 🔥</strong></div>
       </div>
-      ${t.bal > 0 && !sim.stuck ? `<p class="small muted">Con ${money(sim.pay)} al mes serás libre en <b style="color:var(--ink)">${fmtMonth(freeDate)}</b>.</p>` : ""}
-      ${sim.stuck && t.bal > 0 ? `<p class="small" style="color:var(--debt)">Con el presupuesto actual la deuda no baja lo suficiente. Sube tu presupuesto mensual en Deudas.</p>` : ""}
+      ${tt.bal > 0 && !sim.stuck ? `<p class="small muted">${t("Con {a} al mes serás libre en {b}.", { a: money(sim.pay), b: `<b style="color:var(--ink)">${fmtMonth(freeDate)}</b>` })}</p>` : ""}
+      ${sim.stuck && tt.bal > 0 ? `<p class="small" style="color:var(--debt)">${t("Con el presupuesto actual la deuda no baja lo suficiente. Sube tu presupuesto mensual en Deudas.")}</p>` : ""}
     </section>
-    ${boss ? `<section class="card"><div class="row"><div><p class="label">Jefe actual</p><h3>${esc(boss.name)}</h3></div><span class="pill boss">${boss.apr} % interés</span></div>
+    ${boss ? `<section class="card"><div class="row"><div><p class="label">${t("Jefe actual")}</p><h3>${esc(boss.name)}</h3></div><span class="pill boss">${t("{n} % interés", { n: boss.apr })}</span></div>
       <div class="bar"><div style="width:${(100 * (1 - boss.balance / boss.original)).toFixed(1)}%"></div></div>
-      <div class="row"><span class="small muted num">Quedan ${money(boss.balance)} de ${money(boss.original)}</span><button class="xp-btn btn-sm" data-act="pay" data-id="${boss.id}">Atacar: registrar pago</button></div></section>` : ""}
-    ${xpCard(li, s)}
+      <div class="row"><span class="small muted num">${t("Quedan {a} de {b}", { a: money(boss.balance), b: money(boss.original) })}</span><button class="xp-btn btn-sm" data-act="pay" data-id="${boss.id}">${t("Atacar: registrar pago")}</button></div></section>` : ""}
+    ${xpCard(li)}
     ${flowCard()}
-    <section class="card"><div class="row"><h3>Este mes</h3><button class="btn-sm ghost" data-tab-go="movimientos">Ver movimientos</button></div>
-      <div class="grid3"><div class="stat"><span class="label">Ingresos</span><strong class="num" style="color:var(--good)">${money(inc, 1)}</strong></div>
-      <div class="stat"><span class="label">Gastos</span><strong class="num">${money(out, 1)}</strong></div>
-      <div class="stat"><span class="label">Balance</span><strong class="num">${money(inc - out, 1)}</strong></div></div></section>
+    <section class="card"><div class="row"><h3>${t("Este mes")}</h3><button class="btn-sm ghost" data-tab-go="movimientos" data-sub="mes">${t("Ver movimientos")}</button></div>
+      <div class="grid3"><div class="stat"><span class="label">${t("Ingresos")}</span><strong class="num" style="color:var(--good)">${money(inc, 1)}</strong></div>
+      <div class="stat"><span class="label">${t("Gastos")}</span><strong class="num">${money(out, 1)}</strong></div>
+      <div class="stat"><span class="label">${t("Balance")}</span><strong class="num">${money(inc - out, 1)}</strong></div></div></section>
   </div>`;
+}
+function flowRows(f, compact) {
+  const c = compact ? 1 : 0;
+  const hasGross = f.tx.mode !== "none";
+  return `<div class="flow num">
+      ${hasGross ? `<div class="row"><span>${t("Ingresos brutos")}</span><b>${money(f.grossInc, c)}</b></div>
+      <div class="row"><span>${t("Impuestos y deducciones (estimado)")}</span><b style="color:var(--debt)">−${money(f.ded, c)}</b></div>` : ""}
+      <div class="row"><span>${hasGross ? t("Ingresos netos") : t("Ingresos fijos")}</span><b style="color:var(--good)">${money(f.inc, c)}</b></div>
+      <div class="row"><span>${t("Gastos fijos")}</span><b>−${money(f.fixed, c)}</b></div>
+      <div class="row"><span>🐜 ${t("Gastos hormiga")}</span><b style="color:var(--debt)">−${money(f.ants, c)}</b></div>
+      <div class="row total"><span>${t("Disponible cada mes")}</span><b>${money(f.free, c)}</b></div>
+    </div>`;
 }
 function flowCard() {
   const f = flow();
-  if (!f.inc && !f.fixed && !f.ants) return `<section class="card"><h3>Tu dinero fijo</h3><p class="small muted">Registra tu salario y tus gastos fijos para saber cuánto puedes destinar cada mes a tus deudas.</p><button class="btn-sm primary" data-tab-go="movimientos" data-sub="fijos">Registrar fijos</button></section>`;
-  return `<section class="card"><div class="row"><h3>Tu mes típico</h3><button class="btn-sm ghost" data-tab-go="movimientos" data-sub="fijos">Fijos</button></div>
-    <div class="flow num">
-      <div class="row"><span>Ingresos fijos</span><b style="color:var(--good)">${money(f.inc, 1)}</b></div>
-      <div class="row"><span>Gastos fijos</span><b>−${money(f.fixed, 1)}</b></div>
-      <div class="row"><span>🐜 Gastos hormiga</span><b style="color:var(--debt)">−${money(f.ants, 1)}</b></div>
-      <div class="row total"><span>Disponible</span><b>${money(f.free, 1)}</b></div>
-    </div></section>`;
+  if (!f.grossInc && !f.fixed && !f.ants) return `<section class="card"><h3>${t("Tu dinero fijo")}</h3><p class="small muted">${t("Registra tu salario y tus gastos fijos para saber cuánto puedes destinar cada mes a tus deudas.")}</p><button class="btn-sm primary" data-tab-go="movimientos" data-sub="fijos">${t("Registrar fijos")}</button></section>`;
+  return `<section class="card"><div class="row"><h3>${t("Tu mes típico")}</h3><button class="btn-sm ghost" data-tab-go="movimientos" data-sub="fijos">${t("Fijos")}</button></div>${flowRows(f, true)}</section>`;
 }
-function xpCard(li, s) {
+function xpCard(li) {
   const got = ACH.filter(a => S.ach[a.id]).length;
   const next = ACH.find(a => !S.ach[a.id]);
   return `<section class="card">
-    <div class="row"><div><p class="label">Nivel ${li.n}</p><h3>${esc(li.title)}</h3></div><span class="small muted num">${li.into} / ${li.need} XP</span></div>
+    <div class="row"><div><p class="label">${t("Nivel {n}", { n: li.n })}</p><h3>${esc(li.title)}</h3></div><span class="small muted num">${li.into} / ${li.need} XP</span></div>
     <div class="xpbar"><div style="width:${(li.pct * 100).toFixed(1)}%"></div></div>
-    <div class="row"><span class="small muted">${got} de ${ACH.length} logros${next ? ` · siguiente: <b style="color:var(--ink)">${next.e} ${next.t}</b>` : ""}</span><button class="btn-sm ghost" data-tab-go="perfil">Logros</button></div>
+    <div class="row"><span class="small muted">${t("{a} de {b} logros", { a: got, b: ACH.length })}${next ? ` · ${t("siguiente")}: <b style="color:var(--ink)">${next.e} ${t(next.t)}</b>` : ""}</span><button class="btn-sm ghost" data-tab-go="perfil">${t("Logros")}</button></div>
   </section>`;
 }
 
@@ -629,44 +735,44 @@ function vDeudas() {
   const live = S.debts.filter(d => d.balance > 0), done = S.debts.filter(d => d.balance <= 0);
   const sortFn = (a, b) => (sim.payoff[a.id] || 999) - (sim.payoff[b.id] || 999);
   const now = new Date();
-  const ticks = sim.months > 0 ? [{ i: 0, l: "hoy", a: "start" }, { i: sim.months, l: fmtMonth(addMonths(now, sim.months)), a: "end" }] : [];
+  const ticks = sim.months > 0 ? [{ i: 0, l: t("hoy"), a: "start" }, { i: sim.months, l: fmtMonth(addMonths(now, sim.months)), a: "end" }] : [];
   const saving = other.interest - sim.interest;
   return `<div class="stack">
-    <section class="card">
-      <div class="row"><h2>Plan de pago</h2><button class="primary btn-sm" data-act="addDebt">+ Deuda</button></div>
-      <div class="seg" role="group" aria-label="Estrategia">
-        <button data-strat="avalanche" aria-pressed="${S.plan.strategy === "avalanche"}">⛰️ Avalancha</button>
-        <button data-strat="snowball" aria-pressed="${S.plan.strategy === "snowball"}">☃️ Bola de nieve</button>
+    <section class="card wide">
+      <div class="row"><h2>${t("Plan de pago")}</h2><button class="primary btn-sm" data-act="addDebt">+ ${t("Deuda")}</button></div>
+      <div class="seg" role="group" aria-label="${t("Estrategia")}">
+        <button data-strat="avalanche" aria-pressed="${S.plan.strategy === "avalanche"}">⛰️ ${t("Avalancha")}</button>
+        <button data-strat="snowball" aria-pressed="${S.plan.strategy === "snowball"}">☃️ ${t("Bola de nieve")}</button>
       </div>
-      <p class="small muted">${S.plan.strategy === "avalanche" ? "Atacas primero la deuda con el interés más alto. Es la que menos intereses te cuesta." : "Atacas primero la deuda más pequeña. Ganas batallas rápido y eso motiva."}</p>
+      <p class="small muted">${S.plan.strategy === "avalanche" ? t("Atacas primero la deuda con el interés más alto. Es la que menos intereses te cuesta.") : t("Atacas primero la deuda más pequeña. Ganas batallas rápido y eso motiva.")}</p>
       <form id="budgetForm" class="row" style="flex-direction:row;align-items:flex-end">
-        <label class="f" style="flex:1">Presupuesto mensual para deudas<input id="budget" type="number" inputmode="decimal" min="0" step="any" value="${S.plan.budget || ""}" placeholder="${sim.minSum}"></label>
-        <button class="btn-sm">Guardar</button>
+        <label class="f" style="flex:1">${t("Presupuesto mensual para deudas")}<input id="budget" type="number" inputmode="decimal" min="0" step="any" value="${S.plan.budget || ""}" placeholder="${sim.minSum}"></label>
+        <button class="btn-sm">${t("Guardar")}</button>
       </form>
-      ${sim.pay > S.plan.budget && S.debts.some(d => d.balance > 0) ? `<p class="small" style="color:var(--debt)">Tu presupuesto es menor que la suma de pagos mínimos (${money(sim.minSum)}). El plan usa los mínimos.</p>` : ""}
+      ${sim.pay > S.plan.budget && S.debts.some(d => d.balance > 0) ? `<p class="small" style="color:var(--debt)">${t("Tu presupuesto es menor que la suma de pagos mínimos ({a}). El plan usa los mínimos.", { a: money(sim.minSum) })}</p>` : ""}
       ${live.length ? `
       <div class="grid3">
-        <div class="stat"><span class="label">Libre en</span><strong class="num">${sim.stuck ? "—" : sim.months + " m"}</strong></div>
-        <div class="stat"><span class="label">Intereses</span><strong class="num">${money(sim.interest, 1)}</strong></div>
-        <div class="stat"><span class="label">Fecha</span><strong class="num" style="font-size:.95rem">${sim.stuck ? "—" : addMonths(now, sim.months).toLocaleDateString("es", { month: "short", year: "numeric" })}</strong></div>
+        <div class="stat"><span class="label">${t("Libre en")}</span><strong class="num">${sim.stuck ? "—" : nMonths(sim.months)}</strong></div>
+        <div class="stat"><span class="label">${t("Intereses")}</span><strong class="num">${money(sim.interest, 1)}</strong></div>
+        <div class="stat"><span class="label">${t("Fecha")}</span><strong class="num" style="font-size:.95rem">${sim.stuck ? "—" : addMonths(now, sim.months).toLocaleDateString(LOCALE[LANG], { month: "short", year: "numeric" })}</strong></div>
       </div>
-      ${sim.series.length > 1 ? areaChart(sim.series, { label: "Saldo total de deuda por mes", ticks }) : ""}
-      ${Math.abs(saving) >= 1 ? `<p class="small muted">${saving > 0 ? `Esta estrategia te ahorra <b style="color:var(--good)">${money(saving)}</b> en intereses frente a la otra.` : `La otra estrategia ahorraría ${money(-saving)} en intereses, pero esta te da victorias antes.`}</p>` : ""}` : ""}
+      ${sim.series.length > 1 ? areaChart(sim.series, { label: t("Saldo total de deuda por mes"), ticks }) : ""}
+      ${Math.abs(saving) >= 1 ? `<p class="small muted">${saving > 0 ? t("Esta estrategia te ahorra {a} en intereses frente a la otra.", { a: `<b style="color:var(--good)">${money(saving)}</b>` }) : t("La otra estrategia ahorraría {a} en intereses, pero esta te da victorias antes.", { a: money(-saving) })}</p>` : ""}` : ""}
     </section>
-    ${live.length ? `<section class="stack"><h3>Etapas del viaje</h3>${live.sort(sortFn).map(d => debtCard(d, d.id === boss, sim)).join("")}</section>` : `<div class="card empty"><p>No tienes deudas activas.</p><button class="primary" data-act="addDebt">Agregar deuda</button></div>`}
-    ${done.length ? `<section class="stack"><h3>Jefes derrotados</h3>${done.map(d => debtCard(d, false, sim)).join("")}</section>` : ""}
+    ${live.length ? `<section class="stack"><h3>${t("Etapas del viaje")}</h3>${live.sort(sortFn).map(d => debtCard(d, d.id === boss, sim)).join("")}</section>` : `<div class="card empty"><p>${t("No tienes deudas activas.")}</p><button class="primary" data-act="addDebt">${t("Agregar deuda")}</button></div>`}
+    ${done.length ? `<section class="stack"><h3>${t("Jefes derrotados")}</h3>${done.map(d => debtCard(d, false, sim)).join("")}</section>` : ""}
   </div>`;
 }
 function debtCard(d, isBoss, sim) {
-  const pct = d.original ? 1 - d.balance / d.original : 1;
+  const p = d.original ? 1 - d.balance / d.original : 1;
   const m = sim.payoff[d.id];
   const done = d.balance <= 0;
   return `<article class="debt ${isBoss ? "boss" : ""} ${done ? "done" : ""}">
-    <div class="row"><div style="min-width:0"><h3>${esc(d.name)}</h3><p class="small muted">${esc(d.kind || "Deuda")}</p></div>
-      ${done ? `<span class="pill done">Liquidada</span>` : isBoss ? `<span class="pill boss">Jefe actual</span>` : d.apr >= 20 ? `<span class="pill hot">Interés alto</span>` : ""}</div>
-    <div class="bar"><div style="width:${(pct * 100).toFixed(1)}%"></div></div>
-    <div class="meta num"><span>Saldo <b style="color:var(--ink)">${money(d.balance)}</b> de ${money(d.original)}</span><span>${d.apr} % anual</span><span>Mín. ${money(d.minPay)}</span>${!done && m ? `<span>Cae en ${fmtMonth(addMonths(new Date(), m))}</span>` : ""}${done && d.paidAt ? `<span>Liquidada el ${new Date(d.paidAt + "T12:00").toLocaleDateString("es")}</span>` : ""}</div>
-    <div class="btn-row">${!done ? `<button class="xp-btn btn-sm" data-act="pay" data-id="${d.id}">Registrar pago</button>` : ""}<button class="ghost btn-sm" data-act="editDebt" data-id="${d.id}">Editar</button></div>
+    <div class="row"><div style="min-width:0"><h3>${esc(d.name)}</h3><p class="small muted">${esc(t(d.kind || "Otro"))}</p></div>
+      ${done ? `<span class="pill done">${t("Liquidada")}</span>` : isBoss ? `<span class="pill boss">${t("Jefe actual")}</span>` : d.apr >= 20 ? `<span class="pill hot">${t("Interés alto")}</span>` : ""}</div>
+    <div class="bar"><div style="width:${(p * 100).toFixed(1)}%"></div></div>
+    <div class="meta num"><span>${t("Saldo {a} de {b}", { a: `<b style="color:var(--ink)">${money(d.balance)}</b>`, b: money(d.original) })}</span><span>${t("{n} % anual", { n: d.apr })}</span><span>${t("Mín.")} ${money(d.minPay)}</span>${!done && m ? `<span>${t("Cae en {d}", { d: fmtMonth(addMonths(new Date(), m)) })}</span>` : ""}${done && d.paidAt ? `<span>${t("Liquidada el {d}", { d: fmtDate(d.paidAt) })}</span>` : ""}</div>
+    <div class="btn-row">${!done ? `<button class="xp-btn btn-sm" data-act="pay" data-id="${d.id}">${t("Registrar pago")}</button>` : ""}<button class="ghost btn-sm" data-act="editDebt" data-id="${d.id}">${t("Editar")}</button></div>
   </article>`;
 }
 
@@ -675,50 +781,76 @@ const CATS_IN = ["Salario", "Negocio", "Extra", "Regalo", "Otros"];
 const CAT_IC = { Vivienda: "🏠", Comida: "🛒", Transporte: "⛽", Servicios: "💡", Salud: "🩺", Ocio: "🎬", Ropa: "👕", Educación: "📚", Suscripciones: "📺", Otros: "📦", Salario: "💼", Negocio: "🏪", Extra: "✨", Regalo: "🎁", "Pago de deuda": "⚔️" };
 let movMonth = null, movSub = "mes";
 function vMovs() {
-  const seg = `<div class="seg wide" role="group" aria-label="Vista"><button data-sub="mes" aria-pressed="${movSub === "mes"}">Del mes</button><button data-sub="fijos" aria-pressed="${movSub === "fijos"}">Fijos y hormiga</button></div>`;
-  if (movSub === "fijos") return `<div class="stack">${seg}${vFijos()}</div>`;
-  return `<div class="stack">${seg}${vMes()}</div>`;
+  const seg = `<div class="seg wide" role="group" aria-label="${t("Vista")}"><button data-sub="mes" aria-pressed="${movSub === "mes"}">${t("Del mes")}</button><button data-sub="fijos" aria-pressed="${movSub === "fijos"}">${t("Fijos y hormiga")}</button></div>`;
+  return `<div class="stack">${seg}${movSub === "fijos" ? vFijos() : vMes()}</div>`;
+}
+function taxNote(f) {
+  const tx = f.tx;
+  if (tx.mode === "ca") return `<p class="small muted">${t("Deducciones estimadas para {p}: {r} de tu salario bruto.", { p: PROVS[S.profile.province].n, r: pct(tx.est.rate) })} <button class="link" data-act="taxDetail">${t("Ver detalle")}</button></p>`;
+  if (tx.mode === "manual") return `<p class="small muted">${t("Usando una retención manual de {r}.", { r: pct(S.profile.manualRate / 100) })}</p>`;
+  if (tx.mode === "missing") return `<p class="small" style="color:var(--debt)">${t("Tienes ingresos en bruto. Elige tu provincia en Perfil para estimar lo que recibes en neto.")} <button class="link" data-tab-go="perfil">${t("Ir a Perfil")}</button></p>`;
+  return "";
 }
 function vFijos() {
-  const f = flow(), R = S.recurring;
+  const f = flow(), R = S.recurring, tx = f.tx;
   const inc = R.filter(r => r.kind === "ingreso"), fixed = R.filter(r => r.kind === "gasto" && !r.ant), ants = R.filter(r => r.kind === "gasto" && r.ant);
-  const line = r => `<button class="rec" data-act="editRec" data-id="${r.id}"><div class="ic" aria-hidden="true">${CAT_IC[r.category] || "•"}</div><div class="grow"><p>${esc(r.name)}</p><p class="small muted">${money(r.amount)} ${FREQ[r.freq]}${r.freq === "hora" ? ` · ${r.hours || 40} h/semana` : ""}</p></div><div class="right"><p class="num" style="font-weight:800">${money(monthly(r))}</p><p class="small muted">al mes</p></div></button>`;
+  const line = r => {
+    const g = r.kind === "ingreso" && r.gross;
+    const sub = `${money(r.amount)} ${t(FREQ[r.freq])}${r.freq === "hora" ? ` · ${t("{n} h/semana", { n: r.hours || 40 })}` : ""}${r.kind === "ingreso" ? ` · ${g ? t("bruto") : t("neto")}` : ""}`;
+    return `<button class="rec" data-act="editRec" data-id="${r.id}"><div class="ic" aria-hidden="true">${CAT_IC[r.category] || "•"}</div><div class="grow"><p>${esc(r.name)}</p><p class="small muted">${sub}</p></div><div class="right"><p class="num" style="font-weight:800">${money(netMonthly(r, tx))}</p><p class="small muted">${g && tx.mode !== "missing" ? t("neto al mes") : t("al mes")}</p></div></button>`;
+  };
   let antInsight = "";
   if (f.ants > 0 && S.debts.some(d => d.balance > 0)) {
     const base = simulate(S.debts, S.plan.budget, S.plan.strategy);
     const half = simulate(S.debts, base.pay + f.ants / 2, S.plan.strategy);
     const saved = base.months - half.months;
-    if (!base.stuck && saved > 0) antInsight = `<p class="small">Si recortas tus gastos hormiga a la mitad y lo mandas a tus deudas, serás libre <b>${saved} ${saved === 1 ? "mes" : "meses"} antes</b> y te ahorras ${money(base.interest - half.interest, 1)} en intereses.</p>`;
+    if (!base.stuck && saved > 0) antInsight = `<p class="small">${t("Si recortas tus gastos hormiga a la mitad y lo mandas a tus deudas, serás libre {m} antes y te ahorras {a} en intereses.", { m: `<b>${nMonths(saved)}</b>`, a: money(base.interest - half.interest, 1) })}</p>`;
   }
   const sugg = Math.max(0, Math.floor(f.free));
   return `
-    <section class="card wide"><h3>Tu mes típico</h3>
-      <div class="flow num">
-        <div class="row"><span>Ingresos fijos</span><b style="color:var(--good)">${money(f.inc)}</b></div>
-        <div class="row"><span>Gastos fijos</span><b>−${money(f.fixed)}</b></div>
-        <div class="row"><span>🐜 Gastos hormiga</span><b style="color:var(--debt)">−${money(f.ants)}</b></div>
-        <div class="row total"><span>Disponible cada mes</span><b>${money(f.free)}</b></div>
-      </div>
-      ${f.inc > 0 && S.debts.some(d => d.balance > 0) ? (sugg >= f.mins ? `<p class="small muted">Tus pagos mínimos suman ${money(f.mins)}. Puedes destinar hasta ${money(sugg)} al mes a tus deudas (comida variable aparte).</p><button class="btn-sm primary" data-act="useBudget" data-v="${sugg}">Usar ${money(sugg)} como presupuesto de deudas</button>` : `<p class="small" style="color:var(--debt)">Lo disponible no alcanza para los pagos mínimos (${money(f.mins)}). Revisa tus gastos hormiga y fijos.</p>`) : ""}
+    <section class="card wide"><h3>${t("Tu mes típico")}</h3>
+      ${flowRows(f)}
+      ${taxNote(f)}
+      ${f.inc > 0 && S.debts.some(d => d.balance > 0) ? (sugg >= f.mins ? `<p class="small muted">${t("Tus pagos mínimos suman {a}. Puedes destinar hasta {b} al mes a tus deudas (comida variable aparte).", { a: money(f.mins), b: money(sugg) })}</p><button class="btn-sm primary" data-act="useBudget" data-v="${sugg}">${t("Usar {a} como presupuesto de deudas", { a: money(sugg) })}</button>` : `<p class="small" style="color:var(--debt)">${t("Lo disponible no alcanza para los pagos mínimos ({a}). Revisa tus gastos hormiga y fijos.", { a: money(f.mins) })}</p>`) : ""}
     </section>
-    <section class="card"><div class="row"><h3>Ingresos fijos</h3><button class="btn-sm xp-btn" data-act="addRec" data-kind="ingreso">+ Ingreso</button></div>
-      ${inc.length ? `<div>${inc.map(line).join("")}</div>` : `<p class="small muted">Agrega tu salario: mensual, anual o por hora. También tus ingresos extra que se repiten.</p>`}
+    <section class="card"><div class="row"><h3>${t("Ingresos fijos")}</h3><button class="btn-sm xp-btn" data-act="addRec" data-kind="ingreso">+ ${t("Ingreso")}</button></div>
+      ${inc.length ? `<div>${inc.map(line).join("")}</div>` : `<p class="small muted">${t("Agrega tu salario: por hora, mensual o anual, en bruto. También tus ingresos extra que se repiten.")}</p>`}
     </section>
-    <section class="card"><div class="row"><h3>Gastos fijos</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto">+ Gasto</button></div>
-      ${fixed.length ? `<div>${fixed.map(line).join("")}</div>` : `<p class="small muted">Alquiler, servicios, seguros, transporte: lo que pagas siempre.</p>`}
+    <section class="card"><div class="row"><h3>${t("Gastos fijos")}</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto">+ ${t("Gasto")}</button></div>
+      ${fixed.length ? `<div>${fixed.map(line).join("")}</div>` : `<p class="small muted">${t("Alquiler, servicios, seguros, transporte: lo que pagas siempre.")}</p>`}
     </section>
-    <section class="card"><div class="row"><h3>🐜 Gastos hormiga</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto" data-ant="1">+ Hormiga</button></div>
-      <div class="ant"><p class="small"><b>Los gastos que no vemos pero que suman.</b> Te cuestan <b class="num">${money(f.ants)}</b> al mes, <b class="num">${money(f.ants * 12)}</b> al año.</p>${antInsight}</div>
+    <section class="card"><div class="row"><h3>🐜 ${t("Gastos hormiga")}</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto" data-ant="1">+ ${t("Hormiga")}</button></div>
+      <div class="ant"><p class="small">${t("<b>Los gastos que no vemos pero que suman.</b> Te cuestan {a} al mes, {b} al año.", { a: `<b class="num">${money(f.ants)}</b>`, b: `<b class="num">${money(f.ants * 12)}</b>` })}</p>${antInsight}</div>
       ${ants.length ? `<div>${ants.map(line).join("")}</div>` : ""}
-      <p class="label">Agregar rápido</p>
-      <div class="chips">${PRESETS.filter(p => !ants.some(a => a.name === p.name)).map((p, i) => `<button class="chip" data-act="preset" data-i="${PRESETS.indexOf(p)}">${p.e} ${esc(p.name)}</button>`).join("")}</div>
+      <p class="label">${t("Agregar rápido")}</p>
+      <div class="chips">${PRESETS.filter(p => !ants.some(a => a.name === p.name)).map(p => `<button class="chip" data-act="preset" data-i="${PRESETS.indexOf(p)}">${p.e} ${esc(p.name)}</button>`).join("")}</div>
     </section>`;
+}
+function taxDetail() {
+  const tx = taxInfo(); if (tx.mode !== "ca") return;
+  const e = tx.est, P = PROVS[S.profile.province];
+  const row = (l, v, strong) => `<div class="row"><span>${l}</span><b ${strong ? "" : 'style="font-weight:700"'}>${v}</b></div>`;
+  modal(`<p class="label">${t("Estimación de tu salario neto")}</p><h2>${esc(P.n)}</h2>
+    <div class="flow num">
+      ${row(t("Salario bruto anual"), money(e.gross))}
+      ${row(t("Impuesto federal"), "−" + money(e.fed))}
+      ${row(t("Impuesto provincial"), "−" + money(e.prov))}
+      ${row(e.qc ? t("RRQ (pensión de Quebec)") : t("CPP (pensión de Canadá)"), "−" + money(e.pension))}
+      ${row(t("Seguro de empleo (EI)"), "−" + money(e.ei))}
+      ${e.qpip ? row(t("RQAP (seguro parental)"), "−" + money(e.qpip)) : ""}
+      <div class="row total"><span>${t("Neto anual")}</span><b>${money(e.net)}</b></div>
+      ${row(t("Neto al mes"), money(e.net / 12))}
+      ${row(t("Neto cada 2 semanas"), money(e.net / 26))}
+      ${row(t("Deducción total"), pct(e.rate))}
+    </div>
+    <p class="small muted">${t("Es una estimación con tablas aproximadas de 2025-2026. No incluye RRSP, pensión de empresa, seguro médico ni otros descuentos de tu nómina, así que tu pago real puede variar.")}</p>
+    <button class="primary" data-close>${t("Entendido")}</button>`);
 }
 function vMes() {
   const mk = movMonth || monthKey(today());
   const items = [
     ...S.txns.filter(x => monthKey(x.date) === mk),
-    ...S.payments.filter(p => monthKey(p.date) === mk).map(p => ({ id: p.id, type: "pago", amount: p.amount, category: "Pago de deuda", note: (S.debts.find(d => d.id === p.debtId) || {}).name || "Deuda", date: p.date }))
+    ...S.payments.filter(p => monthKey(p.date) === mk).map(p => ({ id: p.id, type: "pago", amount: p.amount, category: "Pago de deuda", note: (S.debts.find(d => d.id === p.debtId) || {}).name || t("Deuda"), date: p.date }))
   ].sort((a, b) => b.date.localeCompare(a.date));
   const inc = items.filter(x => x.type === "ingreso").reduce((a, x) => a + x.amount, 0);
   const out = items.filter(x => x.type === "gasto").reduce((a, x) => a + x.amount, 0);
@@ -728,147 +860,157 @@ function vMes() {
   const cats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
   const maxC = cats.length ? cats[0][1] : 1;
   const [y, m] = mk.split("-").map(Number);
-  let label = new Date(y, m - 1, 1).toLocaleDateString("es", { month: "long", year: "numeric" }); label = label[0].toUpperCase() + label.slice(1);
+  let label = new Date(y, m - 1, 1).toLocaleDateString(LOCALE[LANG], { month: "long", year: "numeric" }); label = label[0].toUpperCase() + label.slice(1);
   return `
     <section class="card">
-      <div class="row"><button class="btn-sm ghost" data-mon="-1" aria-label="Mes anterior">‹</button><h2 style="text-align:center">${label}</h2><button class="btn-sm ghost" data-mon="1" aria-label="Mes siguiente">›</button></div>
+      <div class="row"><button class="btn-sm ghost" data-mon="-1" aria-label="${t("Mes anterior")}">‹</button><h2 style="text-align:center">${label}</h2><button class="btn-sm ghost" data-mon="1" aria-label="${t("Mes siguiente")}">›</button></div>
       <div class="grid2">
-        <div class="stat"><span class="label">Ingresos</span><strong class="num" style="color:var(--good)">${money(inc)}</strong></div>
-        <div class="stat"><span class="label">Gastos</span><strong class="num">${money(out)}</strong></div>
-        <div class="stat"><span class="label">A deudas</span><strong class="num" style="color:var(--xp)">${money(paid)}</strong></div>
-        <div class="stat"><span class="label">Te queda</span><strong class="num">${money(inc - out - paid)}</strong></div>
+        <div class="stat"><span class="label">${t("Ingresos")}</span><strong class="num" style="color:var(--good)">${money(inc)}</strong></div>
+        <div class="stat"><span class="label">${t("Gastos")}</span><strong class="num">${money(out)}</strong></div>
+        <div class="stat"><span class="label">${t("A deudas")}</span><strong class="num" style="color:var(--xp)">${money(paid)}</strong></div>
+        <div class="stat"><span class="label">${t("Te queda")}</span><strong class="num">${money(inc - out - paid)}</strong></div>
       </div>
-      <div class="btn-row"><button class="primary btn-sm" data-act="addTx" data-type="gasto">+ Gasto</button><button class="xp-btn btn-sm" data-act="addTx" data-type="ingreso">+ Ingreso</button></div>
+      <div class="btn-row"><button class="primary btn-sm" data-act="addTx" data-type="gasto">+ ${t("Gasto")}</button><button class="xp-btn btn-sm" data-act="addTx" data-type="ingreso">+ ${t("Ingreso")}</button></div>
     </section>
-    ${cats.length ? `<section class="card"><h3>¿En qué se va el dinero?</h3>${cats.map(([c, v]) => `<div class="catbar"><span>${CAT_IC[c] || ""} ${esc(c)}</span><div class="b"><div style="width:${(100 * v / maxC).toFixed(1)}%"></div></div><span class="num">${money(v, 1)}</span></div>`).join("")}</section>` : ""}
-    <section class="card"><h3>Movimientos</h3>
-      ${items.length ? `<div>${items.map(x => `<div class="tx"><div class="ic" aria-hidden="true">${CAT_IC[x.category] || "•"}</div><div class="grow"><p>${esc(x.note || x.category)}</p><p class="small muted">${esc(x.category)} · ${new Date(x.date + "T12:00").toLocaleDateString("es", { day: "numeric", month: "short" })}</p></div><span class="num ${x.type === "ingreso" ? "amt-in" : x.type === "pago" ? "amt-pay" : "amt-out"}">${x.type === "ingreso" ? "+" : "−"}${money(x.amount)}</span>${x.type !== "pago" ? `<button class="btn-sm ghost" data-act="delTx" data-id="${x.id}" aria-label="Borrar movimiento">✕</button>` : ""}</div>`).join("")}</div>`
-        : `<div class="empty"><p>Sin movimientos este mes.</p><p class="small">Registrar lo que entra y sale te ayuda a encontrar dinero extra para tus deudas.</p></div>`}
+    ${cats.length ? `<section class="card"><h3>${t("¿En qué se va el dinero?")}</h3>${cats.map(([c, v]) => `<div class="catbar"><span>${CAT_IC[c] || ""} ${esc(t(c))}</span><div class="b"><div style="width:${(100 * v / maxC).toFixed(1)}%"></div></div><span class="num">${money(v, 1)}</span></div>`).join("")}</section>` : ""}
+    <section class="card"><h3>${t("Movimientos")}</h3>
+      ${items.length ? `<div>${items.map(x => `<div class="tx"><div class="ic" aria-hidden="true">${CAT_IC[x.category] || "•"}</div><div class="grow"><p>${esc(x.note || t(x.category))}</p><p class="small muted">${esc(t(x.category))} · ${fmtDate(x.date, { day: "numeric", month: "short" })}</p></div><span class="num ${x.type === "ingreso" ? "amt-in" : x.type === "pago" ? "amt-pay" : "amt-out"}">${x.type === "ingreso" ? "+" : "−"}${money(x.amount)}</span>${x.type !== "pago" ? `<button class="btn-sm ghost" data-act="delTx" data-id="${x.id}" aria-label="${t("Borrar movimiento")}">✕</button>` : ""}</div>`).join("")}</div>`
+        : `<div class="empty"><p>${t("Sin movimientos este mes.")}</p><p class="small">${t("Registrar lo que entra y sale te ayuda a encontrar dinero extra para tus deudas.")}</p></div>`}
     </section>`;
 }
 
-function fv(monthly, rate, months) {
+function fv(m, rate, months) {
   const r = rate / 12; const out = [0]; let v = 0;
-  for (let i = 1; i <= months; i++) { v = v * (1 + r) + monthly; out.push(v); }
+  for (let i = 1; i <= months; i++) { v = v * (1 + r) + m; out.push(v); }
   return out;
 }
 function vLibertad() {
-  const t = totals();
+  const tt = totals();
   const sim = simulate(S.debts, S.plan.budget, S.plan.strategy);
-  const free = S.debts.length > 0 && t.bal <= 0;
-  const monthly = S.plan.budget || sim.pay || 0;
+  const free = S.debts.length > 0 && tt.bal <= 0;
+  const mon = S.plan.budget || sim.pay || 0;
   const years = 20, n = years * 12;
-  const mk = monthKey(today());
   const months = [...new Set(S.txns.filter(x => x.type === "gasto").map(x => monthKey(x.date)))];
   const avgOut = months.length ? S.txns.filter(x => x.type === "gasto").reduce((a, x) => a + x.amount, 0) / months.length : 0;
+  const ca = !!PROVS[S.profile.province];
   const sc = [
-    { k: "Conservador", r: .04, c: "var(--muted)", d: "Depósitos, bonos y fondos monetarios. Poca volatilidad." },
-    { k: "Moderado", r: .07, c: "var(--xp)", d: "Fondos indexados globales (mezcla de acciones y bonos)." },
-    { k: "Ambicioso", r: .09, c: "var(--sun)", d: "Mayor peso en acciones globales. Más subidas y bajadas." }
-  ].map(s => ({ ...s, pts: fv(monthly, s.r, n) }));
-  const contrib = Array.from({ length: n + 1 }, (_, i) => monthly * i);
+    { k: "Conservador", r: .04, c: "var(--muted)" },
+    { k: "Moderado", r: .07, c: "var(--xp)" },
+    { k: "Ambicioso", r: .09, c: "var(--sun)" }
+  ].map(s => ({ ...s, pts: fv(mon, s.r, n) }));
+  const contrib = Array.from({ length: n + 1 }, (_, i) => mon * i);
   const at = (s, y) => s.pts[y * 12];
   const freeDate = addMonths(new Date(), sim.months);
+  const th = l => `<th style="text-align:right;padding:6px 4px" class="label">${l}</th>`;
   return `<div class="stack">
     <section class="hero">
-      <p class="label">Modo Libertad</p>
-      <h2>${free ? "¡Eres libre! Ahora haz crecer tu dinero" : "Lo que te espera al cruzar la meta"}</h2>
-      ${free ? `<p class="muted">Ya no debes nada. Los ${money(monthly)} que cada mes iban a deudas ahora pueden trabajar para ti.</p>`
-        : `<div class="lock-note">🔒 <span>Se activa cuando liquides tus deudas${sim.stuck || !S.debts.length ? "" : `, previsto para <b>${fmtMonth(freeDate)}</b>`}. Mira lo que lograrás invirtiendo los mismos <b>${money(monthly)}</b> al mes.</span></div>`}
+      <p class="label">${t("Modo Libertad")}</p>
+      <h2>${free ? t("¡Eres libre! Ahora haz crecer tu dinero") : t("Lo que te espera al cruzar la meta")}</h2>
+      ${free ? `<p class="muted">${t("Ya no debes nada. Los {a} que cada mes iban a deudas ahora pueden trabajar para ti.", { a: money(mon) })}</p>`
+        : `<div class="lock-note">🔒 <span>${sim.stuck || !S.debts.length ? t("Se activa cuando liquides tus deudas.") : t("Se activa cuando liquides tus deudas, previsto para {d}.", { d: `<b>${fmtMonth(freeDate)}</b>` })} ${t("Mira lo que lograrás invirtiendo los mismos {a} al mes.", { a: `<b>${money(mon)}</b>` })}</span></div>`}
     </section>
     <section class="card">
-      <div class="row"><h3>Si inviertes ${money(monthly)} al mes</h3></div>
-      ${monthly > 0 ? linesChart([{ pts: contrib, c: "var(--line)", w: 2, dash: "4 4" }, ...sc], years) : `<p class="muted small">Define tu presupuesto mensual en Deudas para ver la proyección.</p>`}
-      <div class="legend"><span><i style="background:var(--line)"></i>Lo que aportas</span>${sc.map(s => `<span><i style="background:${s.c}"></i>${s.k} (${Math.round(s.r * 100)} %)</span>`).join("")}</div>
+      <h3>${t("Si inviertes {a} al mes", { a: money(mon) })}</h3>
+      ${mon > 0 ? linesChart([{ pts: contrib, c: "var(--line)", w: 2, dash: "4 4" }, ...sc], years) : `<p class="muted small">${t("Define tu presupuesto mensual en Deudas para ver la proyección.")}</p>`}
+      <div class="legend"><span><i style="background:var(--line)"></i>${t("Lo que aportas")}</span>${sc.map(s => `<span><i style="background:${s.c}"></i>${t(s.k)} (${pct(s.r, 0)})</span>`).join("")}</div>
       <div style="overflow-x:auto"><table class="num" style="width:100%;border-collapse:collapse;font-size:.85rem">
-        <thead><tr><th style="text-align:left;padding:6px 4px" class="label">Escenario</th><th style="text-align:right;padding:6px 4px" class="label">5 años</th><th style="text-align:right;padding:6px 4px" class="label">10 años</th><th style="text-align:right;padding:6px 4px" class="label">20 años</th></tr></thead>
-        <tbody>${sc.map(s => `<tr style="border-top:1px solid var(--line)"><td style="padding:8px 4px;font-weight:700">${s.k}</td><td style="text-align:right;padding:8px 4px">${money(at(s, 5), "k")}</td><td style="text-align:right;padding:8px 4px">${money(at(s, 10), "k")}</td><td style="text-align:right;padding:8px 4px;font-weight:800">${money(at(s, 20), "k")}</td></tr>`).join("")}
-        <tr style="border-top:1px solid var(--line)"><td style="padding:8px 4px" class="muted">Solo aportado</td><td style="text-align:right;padding:8px 4px" class="muted">${money(monthly * 60, "k")}</td><td style="text-align:right;padding:8px 4px" class="muted">${money(monthly * 120, "k")}</td><td style="text-align:right;padding:8px 4px" class="muted">${money(monthly * 240, "k")}</td></tr></tbody>
+        <thead><tr><th style="text-align:left;padding:6px 4px" class="label">${t("Escenario")}</th>${th(t("{n} años", { n: 5 }))}${th(t("{n} años", { n: 10 }))}${th(t("{n} años", { n: 20 }))}</tr></thead>
+        <tbody>${sc.map(s => `<tr style="border-top:1px solid var(--line)"><td style="padding:8px 4px;font-weight:700">${t(s.k)}</td><td style="text-align:right;padding:8px 4px">${money(at(s, 5), "k")}</td><td style="text-align:right;padding:8px 4px">${money(at(s, 10), "k")}</td><td style="text-align:right;padding:8px 4px;font-weight:800">${money(at(s, 20), "k")}</td></tr>`).join("")}
+        <tr style="border-top:1px solid var(--line)"><td style="padding:8px 4px" class="muted">${t("Solo aportado")}</td><td style="text-align:right;padding:8px 4px" class="muted">${money(mon * 60, "k")}</td><td style="text-align:right;padding:8px 4px" class="muted">${money(mon * 120, "k")}</td><td style="text-align:right;padding:8px 4px" class="muted">${money(mon * 240, "k")}</td></tr></tbody>
       </table></div>
     </section>
     <section class="card">
-      <h3>Tu ruta para crecer</h3>
+      <h3>${t("Tu ruta para crecer")}</h3>
       <ol class="steps">
-        <li><div><b>Escudo de emergencia.</b> <span class="muted">Ahorra de 3 a 6 meses de gastos${avgOut ? ` (unos ${money(avgOut * 3, 1)} a ${money(avgOut * 6, 1)} según tus gastos)` : ""} en una cuenta de ahorro con liquidez. Es lo que evita volver a endeudarte.</span></div></li>
-        <li><div><b>Jubilación con ventaja fiscal.</b> <span class="muted">Si tu empresa iguala aportes o tu país tiene planes con deducción, aprovéchalos primero: es rentabilidad garantizada.</span></div></li>
-        <li><div><b>Fondos indexados de bajo coste.</b> <span class="muted">Invierte cada mes de forma automática en un fondo indexado global con comisiones bajas. Diversificas sin elegir acciones.</span></div></li>
-        <li><div><b>Metas con nombre.</b> <span class="muted">Vivienda, estudios, viajes: separa cada meta con su plazo. Lo de corto plazo, en productos seguros.</span></div></li>
-        <li><div><b>No vuelvas atrás.</b> <span class="muted">Paga la tarjeta completa cada mes. Si una compra necesita crédito, ahórrala primero.</span></div></li>
+        <li><div><b>${t("Escudo de emergencia.")}</b> <span class="muted">${t("Ahorra de 3 a 6 meses de gastos en una cuenta de ahorro con liquidez. Es lo que evita volver a endeudarte.")}${avgOut ? " " + t("Según tus gastos, unos {a} a {b}.", { a: money(avgOut * 3, 1), b: money(avgOut * 6, 1) }) : ""}</span></div></li>
+        <li><div><b>${ca ? t("TFSA y RRSP.") : t("Jubilación con ventaja fiscal.")}</b> <span class="muted">${ca ? t("En Canadá, la TFSA hace crecer tu dinero libre de impuestos y la RRSP te devuelve impuestos hoy. Si tu empresa iguala aportes (group RRSP), aprovéchalo primero.") : t("Si tu empresa iguala aportes o tu país tiene planes con deducción, aprovéchalos primero: es rentabilidad garantizada.")}</span></div></li>
+        <li><div><b>${t("Fondos indexados de bajo coste.")}</b> <span class="muted">${ca ? t("Un ETF diversificado todo en uno dentro de tu TFSA es una forma sencilla de invertir cada mes con comisiones bajas.") : t("Invierte cada mes de forma automática en un fondo indexado global con comisiones bajas. Diversificas sin elegir acciones.")}</span></div></li>
+        ${ca ? `<li><div><b>${t("FHSA para tu primera casa.")}</b> <span class="muted">${t("Si aún no tienes vivienda, la FHSA combina lo mejor de la TFSA y la RRSP para ahorrar la entrada.")}</span></div></li>` : `<li><div><b>${t("Metas con nombre.")}</b> <span class="muted">${t("Vivienda, estudios, viajes: separa cada meta con su plazo. Lo de corto plazo, en productos seguros.")}</span></div></li>`}
+        <li><div><b>${t("No vuelvas atrás.")}</b> <span class="muted">${t("Paga la tarjeta completa cada mes. Si una compra necesita crédito, ahórrala primero.")}</span></div></li>
       </ol>
-      <p class="small muted">Contenido educativo, no asesoría financiera. Los rendimientos son supuestos anuales promedio, no garantías; las inversiones pueden perder valor.</p>
+      <p class="small muted">${t("Contenido educativo, no asesoría financiera. Los rendimientos son supuestos anuales promedio, no garantías; las inversiones pueden perder valor.")}</p>
     </section>
   </div>`;
 }
 
+const CUR = ["CAD", "USD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"];
+const langOptions = sel => Object.entries(LANG_NAMES).map(([k, v]) => `<option value="${k}" ${k === sel ? "selected" : ""}>${v}</option>`).join("");
+const provOptions = sel => `<option value="">${t("Fuera de Canadá")}</option>` + Object.entries(PROVS).sort((a, b) => a[1].n.localeCompare(b[1].n)).map(([k, v]) => `<option value="${k}" ${k === sel ? "selected" : ""}>${v.n}</option>`).join("");
 function vPerfil() {
-  const li = levelInfo(S.xp);
-  const CUR = ["USD", "CAD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"];
+  const li = levelInfo(S.xp), P = S.profile;
   return `<div class="stack">
     <section class="card">
-      <div class="row"><div><p class="label">Nivel ${li.n} · ${S.xp} XP</p><h2>${esc(li.title)}</h2></div></div>
+      <div class="row"><div><p class="label">${t("Nivel {n}", { n: li.n })} · ${S.xp} XP</p><h2>${esc(li.title)}</h2></div></div>
       <div class="xpbar"><div style="width:${(li.pct * 100).toFixed(1)}%"></div></div>
-      <p class="small muted">${li.need - li.into} XP para el nivel ${li.n + 1}. Ganas XP con cada pago (más cuanto más grande el avance), al liquidar una deuda (+150) y con cada logro (+50).</p>
+      <p class="small muted">${t("{a} XP para el nivel {b}. Ganas XP con cada pago (más cuanto más grande el avance), al liquidar una deuda (+150) y con cada logro (+50).", { a: li.need - li.into, b: li.n + 1 })}</p>
     </section>
-    <section class="card"><h3>Logros</h3>
-      <div class="ach-grid">${ACH.map(a => `<div class="ach ${S.ach[a.id] ? "on" : ""}" title="${esc(a.d)}"><span class="e" aria-hidden="true">${a.e}</span>${a.t}<span class="muted" style="font-weight:600;font-size:.68rem">${S.ach[a.id] ? "Conseguido" : esc(a.d)}</span></div>`).join("")}</div>
-    </section>
-    <section class="card"><h3>Ajustes</h3>
+    <section class="card"><h3>${t("Ajustes")}</h3>
       <form id="profileForm">
-        <label class="f">Tu nombre<input id="pname" value="${esc(S.profile.name)}" autocomplete="given-name"></label>
-        <label class="f">Moneda<select id="pcur">${CUR.map(c => `<option ${c === S.profile.currency ? "selected" : ""}>${c}</option>`).join("")}</select></label>
-        <button class="primary">Guardar</button>
+        <label class="f">${t("Idioma")}<select id="plang">${langOptions(LANG)}</select></label>
+        <label class="f">${t("Tu nombre")}<input id="pname" value="${esc(P.name)}" autocomplete="given-name"></label>
+        <div class="grid2">
+          <label class="f">${t("Moneda")}<select id="pcur">${CUR.map(c => `<option ${c === P.currency ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+          <label class="f">${t("Provincia")}<select id="pprov">${provOptions(P.province)}</select></label>
+        </div>
+        <label class="f" id="prateWrap" ${P.province ? "hidden" : ""}>${t("Retención aproximada sobre ingresos brutos (%)")}<input id="prate" type="number" inputmode="decimal" step="any" min="0" max="80" value="${P.manualRate || ""}" placeholder="25"></label>
+        <p class="small muted">${t("La provincia se usa para estimar impuestos, CPP/RRQ y EI de tus ingresos en bruto.")}</p>
+        <button class="primary">${t("Guardar")}</button>
       </form>
     </section>
-    <section class="card"><h3>Tus datos</h3>
-      <p class="small muted">Todo se guarda solo en este dispositivo. Haz copias de seguridad para pasar tus datos a otro dispositivo. La sincronización automática llegará en una próxima versión.</p>
-      <div class="btn-row"><button class="btn-sm" data-act="export">Exportar copia</button><button class="btn-sm" data-act="import">Importar copia</button><button class="btn-sm danger" data-act="reset">Borrar todo</button></div>
+    <section class="card"><h3>${t("Logros")}</h3>
+      <div class="ach-grid">${ACH.map(a => `<div class="ach ${S.ach[a.id] ? "on" : ""}" title="${esc(t(a.d))}"><span class="e" aria-hidden="true">${a.e}</span>${t(a.t)}<span class="muted" style="font-weight:600;font-size:.68rem">${S.ach[a.id] ? t("Conseguido") : esc(t(a.d))}</span></div>`).join("")}</div>
+    </section>
+    <section class="card"><h3>${t("Tus datos")}</h3>
+      <p class="small muted">${t("Todo se guarda solo en este dispositivo. Haz copias de seguridad para pasar tus datos a otro dispositivo. La sincronización automática llegará en una próxima versión.")}</p>
+      <div class="btn-row"><button class="btn-sm" data-act="export">${t("Exportar copia")}</button><button class="btn-sm" data-act="import">${t("Importar copia")}</button><button class="btn-sm danger" data-act="reset">${t("Borrar todo")}</button></div>
     </section>
   </div>`;
 }
 
 /* ---------- Formularios ---------- */
+const KINDS = ["Tarjeta de crédito", "Línea de crédito", "Préstamo", "Hipoteca", "Familiar", "Otro"];
 function debtForm(d) {
   const isNew = !d;
   d = d || { name: "", kind: "Tarjeta de crédito", original: "", balance: "", apr: "", minPay: "" };
-  modal(`<h2>${isNew ? "Nueva deuda" : "Editar deuda"}</h2>
+  modal(`<h2>${isNew ? t("Nueva deuda") : t("Editar deuda")}</h2>
     <form id="df">
-      <label class="f">Nombre<input id="dname" required value="${esc(d.name)}" placeholder="Ej. Tarjeta Visa"></label>
-      <label class="f">Tipo<select id="dkind">${["Tarjeta de crédito", "Préstamo", "Hipoteca", "Familiar", "Otro"].map(k => `<option ${k === d.kind ? "selected" : ""}>${k}</option>`).join("")}</select></label>
+      <label class="f">${t("Nombre")}<input id="dname" required value="${esc(d.name)}" placeholder="${t("Ej. Tarjeta Visa")}"></label>
+      <label class="f">${t("Tipo")}<select id="dkind">${KINDS.map(k => `<option value="${k}" ${k === d.kind ? "selected" : ""}>${t(k)}</option>`).join("")}</select></label>
       <div class="grid2">
-        <label class="f">Saldo actual<input id="dbal" type="number" inputmode="decimal" step="any" min="0" required value="${d.balance}"></label>
-        <label class="f">Interés anual %<input id="dapr" type="number" inputmode="decimal" step="any" min="0" value="${d.apr}" placeholder="0"></label>
+        <label class="f">${t("Saldo actual")}<input id="dbal" type="number" inputmode="decimal" step="any" min="0" required value="${d.balance}"></label>
+        <label class="f">${t("Interés anual %")}<input id="dapr" type="number" inputmode="decimal" step="any" min="0" value="${d.apr}" placeholder="0"></label>
       </div>
       <div class="grid2">
-        <label class="f">Pago mínimo mensual<input id="dmin" type="number" inputmode="decimal" step="any" min="0" value="${d.minPay}" placeholder="0"></label>
-        ${isNew ? "" : `<label class="f">Monto original<input id="dorig" type="number" inputmode="decimal" step="any" min="0" value="${d.original}"></label>`}
+        <label class="f">${t("Pago mínimo mensual")}<input id="dmin" type="number" inputmode="decimal" step="any" min="0" value="${d.minPay}" placeholder="0"></label>
+        ${isNew ? "" : `<label class="f">${t("Monto original")}<input id="dorig" type="number" inputmode="decimal" step="any" min="0" value="${d.original}"></label>`}
       </div>
-      <div class="btn-row"><button class="primary">${isNew ? "Agregar" : "Guardar"}</button><button type="button" class="ghost" data-close>Cancelar</button>${isNew ? "" : `<button type="button" class="danger" id="ddel">Eliminar</button>`}</div>
+      <div class="btn-row"><button class="primary">${isNew ? t("Agregar") : t("Guardar")}</button><button type="button" class="ghost" data-close>${t("Cancelar")}</button>${isNew ? "" : `<button type="button" class="danger" id="ddel">${t("Eliminar")}</button>`}</div>
     </form>`, (m, close) => {
     $("#df", m).onsubmit = e => {
       e.preventDefault();
       const bal = num($("#dbal", m).value);
-      const data = { name: $("#dname", m).value.trim() || "Deuda", kind: $("#dkind", m).value, balance: bal, apr: num($("#dapr", m).value), minPay: num($("#dmin", m).value) };
+      const data = { name: $("#dname", m).value.trim() || t("Deuda"), kind: $("#dkind", m).value, balance: bal, apr: num($("#dapr", m).value), minPay: num($("#dmin", m).value) };
       if (isNew) {
         S.debts.push({ id: uid(), ...data, original: bal, createdAt: today() });
         if (!S.plan.budget) S.plan.budget = S.debts.reduce((a, x) => a + x.minPay, 0);
-        close(); gainXP(10, "Deuda agregada al mapa");
+        close(); gainXP(10, t("Deuda agregada al mapa"));
       } else {
         Object.assign(d, data, { original: Math.max(num($("#dorig", m).value) || d.original, bal) });
         if (d.balance > 0) delete d.paidAt;
-        close(); toast("Deuda actualizada");
+        close(); toast(t("Deuda actualizada"));
       }
       checkAchievements(); save(); render();
     };
     const del = $("#ddel", m);
-    if (del) del.onclick = () => { close(); confirmBox(`¿Eliminar "${d.name}" y sus pagos?`, "Eliminar", () => { S.debts = S.debts.filter(x => x.id !== d.id); S.payments = S.payments.filter(p => p.debtId !== d.id); save(); render(); toast("Deuda eliminada"); }); };
+    if (del) del.onclick = () => { close(); confirmBox(t("¿Eliminar \"{n}\" y sus pagos?", { n: d.name }), t("Eliminar"), () => { S.debts = S.debts.filter(x => x.id !== d.id); S.payments = S.payments.filter(p => p.debtId !== d.id); save(); render(); toast(t("Deuda eliminada")); }); };
   });
 }
 function payForm(d) {
-  modal(`<p class="label">Registrar pago</p><h2>${esc(d.name)}</h2><p class="muted small num">Saldo actual ${money(d.balance)}</p>
+  modal(`<p class="label">${t("Registrar pago")}</p><h2>${esc(d.name)}</h2><p class="muted small num">${t("Saldo actual")} ${money(d.balance)}</p>
     <form id="pf">
-      <label class="f">Monto pagado<input id="pamt" type="number" inputmode="decimal" step="any" min="0.01" required value="${Math.min(d.minPay || d.balance, d.balance)}"></label>
-      <label class="f">Fecha<input id="pdate" type="date" required value="${today()}"></label>
-      <div class="btn-row"><button class="xp-btn">Registrar pago</button><button type="button" class="ghost" data-close>Cancelar</button><button type="button" class="ghost" id="pall">Liquidar todo (${money(d.balance)})</button></div>
+      <label class="f">${t("Monto pagado")}<input id="pamt" type="number" inputmode="decimal" step="any" min="0.01" required value="${Math.min(d.minPay || d.balance, d.balance)}"></label>
+      <label class="f">${t("Fecha")}<input id="pdate" type="date" required value="${today()}"></label>
+      <div class="btn-row"><button class="xp-btn">${t("Registrar pago")}</button><button type="button" class="ghost" data-close>${t("Cancelar")}</button><button type="button" class="ghost" id="pall">${t("Liquidar todo ({a})", { a: money(d.balance) })}</button></div>
     </form>`, (m, close) => {
     $("#pall", m).onclick = () => { $("#pamt", m).value = d.balance; };
     $("#pf", m).onsubmit = e => {
@@ -885,108 +1027,135 @@ function applyPayment(d, amt, date) {
   S.payments.push({ id: uid(), debtId: d.id, amount: amt, date });
   const xp = 15 + Math.round((amt / (t0.orig || amt)) * 1000);
   confetti(d.balance <= 0 ? 220 : 90);
-  gainXP(xp, CHEERS[Math.floor(Math.random() * CHEERS.length)]);
+  gainXP(xp, t(CHEERS[Math.floor(Math.random() * CHEERS.length)]));
   if (d.balance <= 0) {
     d.paidAt = date;
-    setTimeout(() => gainXP(150, `¡${d.name} derrotado!`), 1200);
+    setTimeout(() => gainXP(150, t("¡{n} derrotado!", { n: d.name })), 1200);
   }
   checkAchievements(); save(); render();
 }
 function recForm(r, kind, ant, preset) {
   const isNew = !r;
-  r = r || Object.assign({ kind, name: "", amount: "", freq: kind === "ingreso" ? "mes" : "mes", hours: 40, category: kind === "ingreso" ? "Salario" : ant ? "Suscripciones" : "Vivienda", ant: !!ant }, preset || {});
+  const ca = !!PROVS[S.profile.province];
+  r = r || Object.assign({ kind, name: "", amount: "", freq: kind === "ingreso" ? "hora" : "mes", hours: 40, category: kind === "ingreso" ? "Salario" : ant ? "Suscripciones" : "Vivienda", ant: !!ant, gross: kind === "ingreso" }, preset || {});
   const cats = r.kind === "ingreso" ? CATS_IN : CATS_OUT;
   const freqs = r.kind === "ingreso" ? ["hora", "semana", "quincena", "mes", "año"] : ["dia", "semana", "quincena", "mes", "año"];
-  const title = r.kind === "ingreso" ? "ingreso fijo" : r.ant ? "gasto hormiga" : "gasto fijo";
-  modal(`<h2>${isNew ? "Nuevo " + title : "Editar " + title}</h2>
+  const title = r.kind === "ingreso" ? (isNew ? "Nuevo ingreso fijo" : "Editar ingreso fijo") : r.ant ? (isNew ? "Nuevo gasto hormiga" : "Editar gasto hormiga") : (isNew ? "Nuevo gasto fijo" : "Editar gasto fijo");
+  modal(`<h2>${t(title)}</h2>
     <form id="rf">
-      <label class="f">Nombre<input id="rname" required value="${esc(r.name)}" placeholder="${r.kind === "ingreso" ? "Ej. Salario" : r.ant ? "Ej. Netflix" : "Ej. Alquiler"}"></label>
+      <label class="f">${t("Nombre")}<input id="rname" required value="${esc(r.name)}" placeholder="${r.kind === "ingreso" ? t("Ej. Salario") : r.ant ? "Ej. Netflix" : t("Ej. Alquiler")}"></label>
       <div class="grid2">
-        <label class="f">Monto<input id="ramt" type="number" inputmode="decimal" step="any" min="0" required value="${r.amount}"></label>
-        <label class="f">Frecuencia<select id="rfreq">${freqs.map(k => `<option value="${k}" ${k === r.freq ? "selected" : ""}>${FREQ[k]}</option>`).join("")}</select></label>
+        <label class="f">${t("Monto")}<input id="ramt" type="number" inputmode="decimal" step="any" min="0" required value="${r.amount}"></label>
+        <label class="f">${t("Frecuencia")}<select id="rfreq">${freqs.map(k => `<option value="${k}" ${k === r.freq ? "selected" : ""}>${t(FREQ[k])}</option>`).join("")}</select></label>
       </div>
-      <label class="f" id="rhoursWrap" ${r.freq === "hora" ? "" : "hidden"}>Horas por semana<input id="rhours" type="number" inputmode="decimal" step="any" min="0" value="${r.hours || 40}"></label>
-      <label class="f">Categoría<select id="rcat">${cats.map(c => `<option ${c === r.category ? "selected" : ""}>${c}</option>`).join("")}</select></label>
-      ${r.kind === "gasto" ? `<label class="row" style="justify-content:flex-start;gap:10px;font-weight:600"><input id="rant" type="checkbox" style="width:22px;height:22px" ${r.ant ? "checked" : ""}> Es un gasto hormiga 🐜</label>` : ""}
+      <label class="f" id="rhoursWrap" ${r.freq === "hora" ? "" : "hidden"}>${t("Horas por semana")}<input id="rhours" type="number" inputmode="decimal" step="any" min="0" value="${r.hours || 40}"></label>
+      ${r.kind === "ingreso" ? `<div class="seg" role="group" aria-label="${t("Tipo de monto")}"><button type="button" data-g="1" aria-pressed="${!!r.gross}">${t("Bruto (antes de impuestos)")}</button><button type="button" data-g="0" aria-pressed="${!r.gross}">${t("Neto (lo que recibes)")}</button></div>` : ""}
+      <label class="f">${t("Categoría")}<select id="rcat">${cats.map(c => `<option value="${c}" ${c === r.category ? "selected" : ""}>${t(c)}</option>`).join("")}</select></label>
+      ${r.kind === "gasto" ? `<label class="row" style="justify-content:flex-start;gap:10px;font-weight:600"><input id="rant" type="checkbox" style="width:22px;height:22px" ${r.ant ? "checked" : ""}> ${t("Es un gasto hormiga")} 🐜</label>` : ""}
       <p class="small muted" id="rmonthly"></p>
-      <div class="btn-row"><button class="primary">${isNew ? "Agregar" : "Guardar"}</button><button type="button" class="ghost" data-close>Cancelar</button>${isNew ? "" : `<button type="button" class="danger" id="rdel">Eliminar</button>`}</div>
+      <div class="btn-row"><button class="primary">${isNew ? t("Agregar") : t("Guardar")}</button><button type="button" class="ghost" data-close>${t("Cancelar")}</button>${isNew ? "" : `<button type="button" class="danger" id="rdel">${t("Eliminar")}</button>`}</div>
     </form>`, (m, close) => {
+    let gross = !!r.gross;
+    m.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { gross = b.dataset.g === "1"; m.querySelectorAll("[data-g]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); upd(); });
     const upd = () => {
       const fq = $("#rfreq", m).value;
       $("#rhoursWrap", m).hidden = fq !== "hora";
       const v = monthly({ amount: num($("#ramt", m).value), freq: fq, hours: num($("#rhours", m).value) });
-      $("#rmonthly", m).textContent = v ? `Equivale a ${money(v)} al mes y ${money(v * 12)} al año.` : "";
+      let txt = v ? t("Equivale a {a} al mes y {b} al año.", { a: money(v), b: money(v * 12) }) : "";
+      if (v && r.kind === "ingreso" && gross && ca) {
+        // Estimación aproximada de este ingreso por sí solo (el total se calcula junto con tus otros ingresos brutos)
+        const est = caPayroll(v * 12, S.profile.province);
+        txt += " " + t("Neto estimado: {a} al mes.", { a: `<b>${money(est.net / 12)}</b>` });
+      } else if (v && r.kind === "ingreso" && gross && !ca) {
+        txt += " " + t("Elige tu provincia en Perfil para estimar el neto.");
+      }
+      $("#rmonthly", m).innerHTML = txt;
     };
     ["#ramt", "#rfreq", "#rhours"].forEach(q => $(q, m).addEventListener("input", upd)); upd();
     $("#rf", m).onsubmit = e => {
       e.preventDefault();
-      const data = { name: $("#rname", m).value.trim() || "Sin nombre", amount: num($("#ramt", m).value), freq: $("#rfreq", m).value, hours: num($("#rhours", m).value) || 40, category: $("#rcat", m).value, ant: r.kind === "gasto" && !!($("#rant", m) || {}).checked };
-      if (isNew) { S.recurring.push({ id: uid(), kind: r.kind, ...data }); close(); gainXP(5, data.ant ? "¡Hormiga detectada!" : "Fijo registrado"); }
-      else { Object.assign(r, data); close(); toast("Guardado"); }
+      const data = { name: $("#rname", m).value.trim() || t("Sin nombre"), amount: num($("#ramt", m).value), freq: $("#rfreq", m).value, hours: num($("#rhours", m).value) || 40, category: $("#rcat", m).value, ant: r.kind === "gasto" && !!($("#rant", m) || {}).checked, gross: r.kind === "ingreso" && gross };
+      if (isNew) { S.recurring.push({ id: uid(), kind: r.kind, ...data }); close(); gainXP(5, data.ant ? t("¡Hormiga detectada!") : t("Fijo registrado")); }
+      else { Object.assign(r, data); close(); toast(t("Guardado")); }
       checkAchievements(); save(); render();
     };
     const del = $("#rdel", m);
-    if (del) del.onclick = () => { S.recurring = S.recurring.filter(x => x.id !== r.id); close(); save(); render(); toast("Eliminado"); };
+    if (del) del.onclick = () => { S.recurring = S.recurring.filter(x => x.id !== r.id); close(); save(); render(); toast(t("Eliminado")); };
   });
 }
 function txForm(type) {
   const cats = type === "ingreso" ? CATS_IN : CATS_OUT;
-  modal(`<h2>${type === "ingreso" ? "Nuevo ingreso" : "Nuevo gasto"}</h2>
+  modal(`<h2>${type === "ingreso" ? t("Nuevo ingreso") : t("Nuevo gasto")}</h2>
     <form id="tf">
-      <label class="f">Monto<input id="tamt" type="number" inputmode="decimal" step="any" min="0.01" required></label>
-      <label class="f">Categoría<select id="tcat">${cats.map(c => `<option>${c}</option>`).join("")}</select></label>
-      <label class="f">Nota<input id="tnote" placeholder="Opcional"></label>
-      <label class="f">Fecha<input id="tdate" type="date" required value="${today()}"></label>
-      <div class="btn-row"><button class="primary">Guardar</button><button type="button" class="ghost" data-close>Cancelar</button></div>
+      <label class="f">${t("Monto")}<input id="tamt" type="number" inputmode="decimal" step="any" min="0.01" required></label>
+      <label class="f">${t("Categoría")}<select id="tcat">${cats.map(c => `<option value="${c}">${t(c)}</option>`).join("")}</select></label>
+      <label class="f">${t("Nota")}<input id="tnote" placeholder="${t("Opcional")}"></label>
+      <label class="f">${t("Fecha")}<input id="tdate" type="date" required value="${today()}"></label>
+      <div class="btn-row"><button class="primary">${t("Guardar")}</button><button type="button" class="ghost" data-close>${t("Cancelar")}</button></div>
     </form>`, (m, close) => {
     $("#tf", m).onsubmit = e => {
       e.preventDefault();
       const amt = num($("#tamt", m).value); if (amt <= 0) return;
       S.txns.push({ id: uid(), type, amount: amt, category: $("#tcat", m).value, note: $("#tnote", m).value.trim(), date: $("#tdate", m).value || today() });
-      close(); gainXP(2, type === "ingreso" ? "Ingreso registrado" : "Gasto registrado");
+      close(); gainXP(2, type === "ingreso" ? t("Ingreso registrado") : t("Gasto registrado"));
       checkAchievements(); save(); render();
     };
   });
 }
 function exportData() {
   const json = JSON.stringify(S, null, 1);
-  modal(`<h2>Copia de seguridad</h2><p class="small muted">Guarda este texto en un lugar seguro. Para restaurarlo usa “Importar copia”.</p>
+  modal(`<h2>${t("Copia de seguridad")}</h2><p class="small muted">${t("Guarda este texto en un lugar seguro. Para restaurarlo usa “Importar copia”.")}</p>
     <textarea id="exp" readonly>${esc(json)}</textarea>
-    <div class="btn-row"><button class="primary" id="cp">Copiar</button>${window.top === window ? `<button id="dl">Descargar archivo</button>` : ""}<button class="ghost" data-close>Cerrar</button></div>`, (m) => {
-    $("#cp", m).onclick = async () => { try { await navigator.clipboard.writeText(json); toast("Copia copiada al portapapeles"); } catch (e) { $("#exp", m).select(); toast("Selecciona y copia el texto"); } };
-    $("#dl", m) && ($("#dl", m).onclick = () => { try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([json], { type: "application/json" })); a.download = `free-dream-${today()}.json`; a.click(); } catch (e) { toast("No se pudo descargar. Usa Copiar."); } });
+    <div class="btn-row"><button class="primary" id="cp">${t("Copiar")}</button>${window.top === window ? `<button id="dl">${t("Descargar archivo")}</button>` : ""}<button class="ghost" data-close>${t("Cerrar")}</button></div>`, (m) => {
+    $("#cp", m).onclick = async () => { try { await navigator.clipboard.writeText(json); toast(t("Copia copiada al portapapeles")); } catch (e) { $("#exp", m).select(); toast(t("Selecciona y copia el texto")); } };
+    $("#dl", m) && ($("#dl", m).onclick = () => { try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([json], { type: "application/json" })); a.download = `free-dream-${today()}.json`; a.click(); } catch (e) { toast(t("No se pudo descargar. Usa Copiar.")); } });
   });
 }
+function migrate(s) {
+  s.recurring = s.recurring || [];
+  s.profile = s.profile || {};
+  if (!s.profile.lang) s.profile.lang = detectLang();
+  if (s.profile.province === undefined) s.profile.province = s.profile.currency === "CAD" ? "ON" : "";
+  if (!s.v || s.v < 2) s.recurring.forEach(r => { if (r.kind === "ingreso" && r.gross === undefined) r.gross = r.category === "Salario"; });
+  s.v = 2;
+  return s;
+}
 function importData() {
-  modal(`<h2>Importar copia</h2><p class="small muted">Pega el texto de tu copia o elige el archivo. Reemplazará los datos de este dispositivo.</p>
+  modal(`<h2>${t("Importar copia")}</h2><p class="small muted">${t("Pega el texto de tu copia o elige el archivo. Reemplazará los datos de este dispositivo.")}</p>
     <input type="file" id="impf" accept="application/json,.json">
-    <textarea id="imp" placeholder='{"v":1, ...}'></textarea>
-    <div class="btn-row"><button class="primary" id="go">Importar</button><button class="ghost" data-close>Cancelar</button></div>`, (m, close) => {
+    <textarea id="imp" placeholder='{"v":2, ...}'></textarea>
+    <div class="btn-row"><button class="primary" id="go">${t("Importar")}</button><button class="ghost" data-close>${t("Cancelar")}</button></div>`, (m, close) => {
     $("#impf", m).onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => $("#imp", m).value = r.result; r.readAsText(f); };
     $("#go", m).onclick = () => {
       try {
         const d = JSON.parse($("#imp", m).value);
         if (!d || !Array.isArray(d.debts) || !d.profile) throw 0;
-        S = Object.assign(emptyState("", "USD"), d); S.recurring = S.recurring || []; close(); save(); render(); toast("Datos importados");
-      } catch (e) { toast("Ese texto no es una copia válida de Free Dream"); }
+        S = migrate(Object.assign(emptyState("", "CAD", "", LANG), d)); LANG = S.profile.lang; close(); save(); render(); toast(t("Datos importados"));
+      } catch (e) { toast(t("Ese texto no es una copia válida de Free Dream")); }
     };
   });
 }
 function onboarding() {
-  modal(`<p class="label">Bienvenido a Free Dream</p><h2>Empecemos tu viaje hacia la libertad</h2>
-    <p class="muted small">Tus datos se guardan solo en este dispositivo.</p>
+  modal(`<p class="label">${t("Bienvenido a Free Dream")}</p><h2>${t("Empecemos tu viaje hacia la libertad")}</h2>
+    <p class="muted small">${t("Tus datos se guardan solo en este dispositivo.")}</p>
     <form id="ob">
-      <label class="f">¿Cómo te llamas?<input id="oname" required autocomplete="given-name"></label>
-      <label class="f">Moneda<select id="ocur">${["USD", "CAD", "EUR", "MXN", "COP", "ARS", "CLP", "PEN", "DOP", "GTQ", "CRC", "UYU", "BOB", "PYG", "VES", "HNL", "NIO", "PAB"].map(c => `<option>${c}</option>`).join("")}</select></label>
-      <div class="btn-row"><button class="primary">Comenzar</button><button type="button" class="ghost" data-close>Seguir viendo el ejemplo</button></div>
+      <label class="f">${t("Idioma")}<select id="olang">${langOptions(LANG)}</select></label>
+      <label class="f">${t("¿Cómo te llamas?")}<input id="oname" required autocomplete="given-name"></label>
+      <div class="grid2">
+        <label class="f">${t("Moneda")}<select id="ocur">${CUR.map(c => `<option>${c}</option>`).join("")}</select></label>
+        <label class="f">${t("Provincia")}<select id="oprov">${provOptions(S.profile.province || "ON")}</select></label>
+      </div>
+      <div class="btn-row"><button class="primary">${t("Comenzar")}</button><button type="button" class="ghost" data-close>${t("Seguir viendo el ejemplo")}</button></div>
     </form>`, (m, close) => {
+    $("#olang", m).onchange = e => { const name = $("#oname", m).value; LANG = e.target.value; S.profile.lang = LANG; render(); onboarding(); $("#oname").value = name; };
     $("#ob", m).onsubmit = e => {
       e.preventDefault();
-      S = emptyState($("#oname", m).value.trim(), $("#ocur", m).value);
-      close(); tab = "inicio"; save(); render(); toast(`¡Bienvenido, ${esc(S.profile.name)}! Agrega tu primera deuda.`);
+      S = emptyState($("#oname", m).value.trim(), $("#ocur", m).value, $("#oprov", m).value, LANG);
+      close(); tab = "inicio"; save(); render(); toast(t("¡Bienvenido, {n}! Agrega tu primera deuda.", { n: esc(S.profile.name) }));
     };
   });
 }
+function setLang(l) { LANG = l; S.profile.lang = l; save(); render(); }
 
 /* ---------- Eventos ---------- */
 function bind(v) {
@@ -1000,11 +1169,12 @@ function bind(v) {
       case "addRec": return recForm(null, b.dataset.kind, !!b.dataset.ant);
       case "editRec": return recForm(S.recurring.find(x => x.id === id));
       case "preset": { const p = PRESETS[+b.dataset.i]; return recForm(null, "gasto", true, { name: p.name, amount: p.amount, freq: p.freq, category: p.category }); }
-      case "useBudget": S.plan.budget = +b.dataset.v; save(); render(); return toast("Presupuesto de deudas actualizado");
+      case "useBudget": S.plan.budget = +b.dataset.v; save(); render(); return toast(t("Presupuesto de deudas actualizado"));
+      case "taxDetail": return taxDetail();
       case "delTx": S.txns = S.txns.filter(x => x.id !== id); save(); return render();
       case "export": return exportData();
       case "import": return importData();
-      case "reset": return confirmBox("¿Borrar todos tus datos de este dispositivo?", "Borrar todo", () => { S = emptyState("", S.profile.currency); save(); onboarding(); render(); });
+      case "reset": return confirmBox(t("¿Borrar todos tus datos de este dispositivo?"), t("Borrar todo"), () => { S = emptyState("", S.profile.currency, S.profile.province, LANG); save(); onboarding(); render(); });
     }
   });
   v.querySelectorAll("[data-tab-go]").forEach(b => b.onclick = () => { if (b.dataset.sub) movSub = b.dataset.sub; go(b.dataset.tabGo); });
@@ -1012,27 +1182,45 @@ function bind(v) {
   v.querySelectorAll("[data-strat]").forEach(b => b.onclick = () => { S.plan.strategy = b.dataset.strat; save(); render(); });
   v.querySelectorAll("[data-mon]").forEach(b => b.onclick = () => {
     const [y, m] = (movMonth || monthKey(today())).split("-").map(Number);
-    const n = new Date(y, m - 1 + Number(b.dataset.mon), 15); movMonth = n.toISOString().slice(0, 7); render();
+    movMonth = new Date(y, m - 1 + Number(b.dataset.mon), 15).toISOString().slice(0, 7); render();
   });
   const bf = $("#budgetForm", v);
-  if (bf) bf.onsubmit = e => { e.preventDefault(); S.plan.budget = num($("#budget", v).value); save(); render(); toast("Presupuesto guardado"); };
+  if (bf) bf.onsubmit = e => { e.preventDefault(); S.plan.budget = num($("#budget", v).value); save(); render(); toast(t("Presupuesto guardado")); };
   const pf = $("#profileForm", v);
-  if (pf) pf.onsubmit = e => { e.preventDefault(); S.profile.name = $("#pname", v).value.trim(); S.profile.currency = $("#pcur", v).value; save(); render(); toast("Ajustes guardados"); };
+  if (pf) {
+    $("#pprov", v).onchange = e => { $("#prateWrap", v).hidden = !!e.target.value; };
+    $("#plang", v).onchange = e => setLang(e.target.value);
+    pf.onsubmit = e => {
+      e.preventDefault();
+      Object.assign(S.profile, { name: $("#pname", v).value.trim(), currency: $("#pcur", v).value, province: $("#pprov", v).value, manualRate: num($("#prate", v).value) });
+      save(); render(); toast(t("Ajustes guardados"));
+    };
+  }
 }
-function go(t) {
-  tab = t; render(); scrollTo({ top: 0 });
-  if (/^[a-z]+$/.test(t)) try { history.replaceState(null, "", "#" + t); } catch (e) {}
+function go(k) {
+  tab = k; render(); scrollTo({ top: 0 });
+  if (/^[a-z]+$/.test(k)) try { history.replaceState(null, "", "#" + k); } catch (e) {}
 }
 document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => go(b.dataset.tab));
 $("#lvlChip").onclick = () => go("perfil");
 $("#startOwn").onclick = onboarding;
+$("#langBtn").onclick = () => {
+  modal(`<h2>${t("Idioma")}</h2><div class="stack">${Object.entries(LANG_NAMES).map(([k, v]) => `<button class="${k === LANG ? "primary" : "ghost"}" data-l="${k}">${v}</button>`).join("")}</div>`, (m, close) => {
+    m.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { close(); setLang(b.dataset.l); });
+  });
+};
+
+/* ---------- Traducciones ---------- */
+const I18N = {"en":{"{n} mes":"{n} month","{n} meses":"{n} months","Préstamo del coche":"Car loan","Préstamo estudiantil":"Student loan","Préstamo familiar":"Family loan","Nómina":"Paycheque","Alquiler":"Rent","Supermercado":"Groceries","Gasolina":"Gas","Cine y cena":"Movie and dinner","Luz e internet":"Hydro and internet","Salario":"Salary","Trabajos de fin de semana":"Weekend gigs","Seguro del coche":"Car insurance","Café de la mañana":"Morning coffee","Logro desbloqueado":"Achievement unlocked","Cancelar":"Cancel","¡Subiste de nivel!":"Level up!","Sigue así. Cada nivel es una prueba de que puedes con esto.":"Keep going. Every level proves you can do this.","¡Vamos!":"Let's go!","Proyección de inversión a {n} años":"{n}-year investment projection","hoy":"today","{n} años":"{n} years","Ver nivel y logros":"View level and achievements","Estás viendo <b>datos de ejemplo</b>. Juega con ellos o empieza con los tuyos.":"You're viewing <b>sample data</b>. Play with it or start with your own.","Empezar con mis datos":"Start with my data","Secciones":"Sections","Hola":"Hi","Hola, {name}":"Hi, {name}","Tu viaje empieza aquí":"Your journey starts here","Agrega tus deudas para trazar el mapa hacia tu libertad financiera. Cada pago que registres te dará XP, logros y te acercará a la meta.":"Add your debts to map your path to financial freedom. Every payment you log earns XP and achievements and brings you closer to the goal.","Agregar mi primera deuda":"Add my first debt","Progreso hacia la libertad":"Progress toward freedom","camino a la libertad":"road to freedom","¡Libre!":"Free!","{p} pagado":"{p} paid","Te queda por pagar":"Left to pay","Tú":"You","Ya pagado":"Paid so far","Libre en":"Free in","¡Ya!":"Now!","Racha":"Streak","Con {a} al mes serás libre en {b}.":"With {a} a month you'll be free by {b}.","Con el presupuesto actual la deuda no baja lo suficiente. Sube tu presupuesto mensual en Deudas.":"With your current budget the debt isn't going down enough. Raise your monthly budget in Debts.","Jefe actual":"Current boss","{n} % interés":"{n}% interest","Quedan {a} de {b}":"{a} left of {b}","Atacar: registrar pago":"Attack: log payment","Este mes":"This month","Ver movimientos":"View transactions","Ingresos":"Income","Gastos":"Expenses","Balance":"Balance","Ingresos brutos":"Gross income","Impuestos y deducciones (estimado)":"Taxes and deductions (estimate)","Ingresos netos":"Net income","Ingresos fijos":"Fixed income","Gastos fijos":"Fixed expenses","Gastos hormiga":"Small leaks","Disponible cada mes":"Available each month","Tu dinero fijo":"Your regular money","Registra tu salario y tus gastos fijos para saber cuánto puedes destinar cada mes a tus deudas.":"Add your salary and fixed expenses to see how much you can put toward your debts each month.","Registrar fijos":"Add fixed items","Tu mes típico":"Your typical month","Fijos":"Fixed","Nivel {n}":"Level {n}","{a} de {b} logros":"{a} of {b} achievements","siguiente":"next","Logros":"Achievements","Plan de pago":"Payoff plan","Deuda":"Debt","Estrategia":"Strategy","Avalancha":"Avalanche","Bola de nieve":"Snowball","Atacas primero la deuda con el interés más alto. Es la que menos intereses te cuesta.":"You attack the highest-interest debt first. It costs you the least interest.","Atacas primero la deuda más pequeña. Ganas batallas rápido y eso motiva.":"You attack the smallest debt first. Quick wins keep you motivated.","Presupuesto mensual para deudas":"Monthly debt budget","Guardar":"Save","Tu presupuesto es menor que la suma de pagos mínimos ({a}). El plan usa los mínimos.":"Your budget is below your total minimum payments ({a}). The plan uses the minimums.","Intereses":"Interest","Fecha":"Date","Saldo total de deuda por mes":"Total debt balance by month","Esta estrategia te ahorra {a} en intereses frente a la otra.":"This strategy saves you {a} in interest compared to the other.","La otra estrategia ahorraría {a} en intereses, pero esta te da victorias antes.":"The other strategy would save {a} in interest, but this one gives you earlier wins.","Etapas del viaje":"Journey stages","No tienes deudas activas.":"You have no active debts.","Agregar deuda":"Add debt","Jefes derrotados":"Defeated bosses","Liquidada":"Paid off","Interés alto":"High interest","Saldo {a} de {b}":"Balance {a} of {b}","{n} % anual":"{n}% per year","Mín.":"Min.","Cae en {d}":"Falls in {d}","Liquidada el {d}":"Paid off on {d}","Registrar pago":"Log payment","Editar":"Edit","Vista":"View","Del mes":"This month","Fijos y hormiga":"Fixed and small leaks","Deducciones estimadas para {p}: {r} de tu salario bruto.":"Estimated deductions for {p}: {r} of your gross pay.","Ver detalle":"See breakdown","Usando una retención manual de {r}.":"Using a manual withholding of {r}.","Tienes ingresos en bruto. Elige tu provincia en Perfil para estimar lo que recibes en neto.":"You have gross income. Choose your province in Profile to estimate your take-home pay.","Ir a Perfil":"Go to Profile","{n} h/semana":"{n} h/week","bruto":"gross","neto":"net","neto al mes":"net per month","al mes":"per month","Si recortas tus gastos hormiga a la mitad y lo mandas a tus deudas, serás libre {m} antes y te ahorras {a} en intereses.":"If you cut your small leaks in half and send it to your debts, you'll be free {m} sooner and save {a} in interest.","Tus pagos mínimos suman {a}. Puedes destinar hasta {b} al mes a tus deudas (comida variable aparte).":"Your minimum payments add up to {a}. You can put up to {b} a month toward your debts (not counting variable food costs).","Usar {a} como presupuesto de deudas":"Use {a} as my debt budget","Lo disponible no alcanza para los pagos mínimos ({a}). Revisa tus gastos hormiga y fijos.":"What's available doesn't cover your minimum payments ({a}). Review your small leaks and fixed expenses.","Ingreso":"Income","Agrega tu salario: por hora, mensual o anual, en bruto. También tus ingresos extra que se repiten.":"Add your salary: hourly, monthly or yearly, before taxes. Also any extra income that repeats.","Gasto":"Expense","Alquiler, servicios, seguros, transporte: lo que pagas siempre.":"Rent, utilities, insurance, transit: what you always pay.","Hormiga":"Small leak","<b>Los gastos que no vemos pero que suman.</b> Te cuestan {a} al mes, {b} al año.":"<b>The expenses we don't notice but that add up.</b> They cost you {a} a month, {b} a year.","Agregar rápido":"Quick add","Estimación de tu salario neto":"Your take-home pay estimate","Salario bruto anual":"Annual gross salary","Impuesto federal":"Federal tax","Impuesto provincial":"Provincial tax","RRQ (pensión de Quebec)":"QPP (Quebec Pension Plan)","CPP (pensión de Canadá)":"CPP (Canada Pension Plan)","Seguro de empleo (EI)":"Employment Insurance (EI)","RQAP (seguro parental)":"QPIP (parental insurance)","Neto anual":"Annual net","Neto al mes":"Net per month","Neto cada 2 semanas":"Net every 2 weeks","Deducción total":"Total deductions","Es una estimación con tablas aproximadas de 2025-2026. No incluye RRSP, pensión de empresa, seguro médico ni otros descuentos de tu nómina, así que tu pago real puede variar.":"This is an estimate using approximate 2025-2026 tables. It doesn't include RRSP, workplace pension, health benefits or other payroll deductions, so your actual pay may differ.","Entendido":"Got it","Mes anterior":"Previous month","Mes siguiente":"Next month","A deudas":"To debts","Te queda":"Left over","¿En qué se va el dinero?":"Where does the money go?","Movimientos":"Transactions","Borrar movimiento":"Delete transaction","Sin movimientos este mes.":"No transactions this month.","Registrar lo que entra y sale te ayuda a encontrar dinero extra para tus deudas.":"Tracking what comes in and goes out helps you find extra money for your debts.","Modo Libertad":"Freedom mode","¡Eres libre! Ahora haz crecer tu dinero":"You're free! Now grow your money","Lo que te espera al cruzar la meta":"What's waiting at the finish line","Ya no debes nada. Los {a} que cada mes iban a deudas ahora pueden trabajar para ti.":"You owe nothing. The {a} that went to debt every month can now work for you.","Se activa cuando liquides tus deudas.":"Unlocks when you pay off your debts.","Se activa cuando liquides tus deudas, previsto para {d}.":"Unlocks when you pay off your debts, expected by {d}.","Mira lo que lograrás invirtiendo los mismos {a} al mes.":"See what you'll build by investing the same {a} a month.","Si inviertes {a} al mes":"If you invest {a} a month","Define tu presupuesto mensual en Deudas para ver la proyección.":"Set your monthly budget in Debts to see the projection.","Lo que aportas":"What you contribute","Escenario":"Scenario","Solo aportado":"Contributions only","Tu ruta para crecer":"Your path to growth","Escudo de emergencia.":"Emergency shield.","Ahorra de 3 a 6 meses de gastos en una cuenta de ahorro con liquidez. Es lo que evita volver a endeudarte.":"Save 3 to 6 months of expenses in an accessible savings account. It's what keeps you out of debt.","Según tus gastos, unos {a} a {b}.":"Based on your spending, about {a} to {b}.","TFSA y RRSP.":"TFSA and RRSP.","Jubilación con ventaja fiscal.":"Tax-advantaged retirement.","En Canadá, la TFSA hace crecer tu dinero libre de impuestos y la RRSP te devuelve impuestos hoy. Si tu empresa iguala aportes (group RRSP), aprovéchalo primero.":"In Canada, a TFSA grows your money tax-free and an RRSP gives you a tax refund today. If your employer matches contributions (group RRSP), take that first.","Si tu empresa iguala aportes o tu país tiene planes con deducción, aprovéchalos primero: es rentabilidad garantizada.":"If your employer matches contributions or your country has tax-deductible plans, use them first: it's a guaranteed return.","Fondos indexados de bajo coste.":"Low-cost index funds.","Un ETF diversificado todo en uno dentro de tu TFSA es una forma sencilla de invertir cada mes con comisiones bajas.":"An all-in-one diversified ETF inside your TFSA is a simple, low-fee way to invest every month.","Invierte cada mes de forma automática en un fondo indexado global con comisiones bajas. Diversificas sin elegir acciones.":"Invest automatically every month in a low-fee global index fund. You diversify without picking stocks.","FHSA para tu primera casa.":"FHSA for your first home.","Si aún no tienes vivienda, la FHSA combina lo mejor de la TFSA y la RRSP para ahorrar la entrada.":"If you don't own a home yet, the FHSA combines the best of the TFSA and RRSP to save for a down payment.","Metas con nombre.":"Named goals.","Vivienda, estudios, viajes: separa cada meta con su plazo. Lo de corto plazo, en productos seguros.":"Home, school, travel: give each goal its own timeline. Keep short-term money in safe products.","No vuelvas atrás.":"Don't go back.","Paga la tarjeta completa cada mes. Si una compra necesita crédito, ahórrala primero.":"Pay your card in full every month. If a purchase needs credit, save for it first.","Contenido educativo, no asesoría financiera. Los rendimientos son supuestos anuales promedio, no garantías; las inversiones pueden perder valor.":"Educational content, not financial advice. Returns are assumed annual averages, not guarantees; investments can lose value.","Fuera de Canadá":"Outside Canada","{a} XP para el nivel {b}. Ganas XP con cada pago (más cuanto más grande el avance), al liquidar una deuda (+150) y con cada logro (+50).":"{a} XP to level {b}. You earn XP with every payment (more for bigger progress), for paying off a debt (+150) and for each achievement (+50).","Ajustes":"Settings","Idioma":"Language","Tu nombre":"Your name","Moneda":"Currency","Provincia":"Province","Retención aproximada sobre ingresos brutos (%)":"Approximate withholding on gross income (%)","La provincia se usa para estimar impuestos, CPP/RRQ y EI de tus ingresos en bruto.":"Your province is used to estimate taxes, CPP/QPP and EI on your gross income.","Conseguido":"Unlocked","Tus datos":"Your data","Todo se guarda solo en este dispositivo. Haz copias de seguridad para pasar tus datos a otro dispositivo. La sincronización automática llegará en una próxima versión.":"Everything is stored only on this device. Make backups to move your data to another device. Automatic sync is coming in a future version.","Exportar copia":"Export backup","Importar copia":"Import backup","Borrar todo":"Erase everything","Nueva deuda":"New debt","Editar deuda":"Edit debt","Nombre":"Name","Ej. Tarjeta Visa":"E.g. Visa card","Tipo":"Type","Saldo actual":"Current balance","Interés anual %":"Annual interest %","Pago mínimo mensual":"Monthly minimum payment","Monto original":"Original amount","Agregar":"Add","Eliminar":"Delete","Deuda agregada al mapa":"Debt added to the map","Deuda actualizada":"Debt updated","¿Eliminar \"{n}\" y sus pagos?":"Delete \"{n}\" and its payments?","Deuda eliminada":"Debt deleted","Monto pagado":"Amount paid","Liquidar todo ({a})":"Pay it all ({a})","¡{n} derrotado!":"{n} defeated!","Ej. Salario":"E.g. Salary","Ej. Alquiler":"E.g. Rent","Monto":"Amount","Frecuencia":"Frequency","Horas por semana":"Hours per week","Tipo de monto":"Amount type","Bruto (antes de impuestos)":"Gross (before taxes)","Neto (lo que recibes)":"Net (what you receive)","Categoría":"Category","Es un gasto hormiga":"It's a small leak","Equivale a {a} al mes y {b} al año.":"That's {a} a month and {b} a year.","Neto estimado: {a} al mes.":"Estimated net: {a} a month.","Elige tu provincia en Perfil para estimar el neto.":"Choose your province in Profile to estimate net pay.","Sin nombre":"Untitled","¡Hormiga detectada!":"Small leak spotted!","Fijo registrado":"Fixed item added","Guardado":"Saved","Eliminado":"Deleted","Nuevo ingreso":"New income","Nuevo gasto":"New expense","Nota":"Note","Opcional":"Optional","Ingreso registrado":"Income logged","Gasto registrado":"Expense logged","Copia de seguridad":"Backup","Guarda este texto en un lugar seguro. Para restaurarlo usa “Importar copia”.":"Keep this text somewhere safe. To restore it, use “Import backup”.","Copiar":"Copy","Descargar archivo":"Download file","Cerrar":"Close","Copia copiada al portapapeles":"Backup copied to clipboard","Selecciona y copia el texto":"Select and copy the text","No se pudo descargar. Usa Copiar.":"Couldn't download. Use Copy.","Pega el texto de tu copia o elige el archivo. Reemplazará los datos de este dispositivo.":"Paste your backup text or choose the file. It will replace the data on this device.","Importar":"Import","Datos importados":"Data imported","Ese texto no es una copia válida de Free Dream":"That text isn't a valid Free Dream backup","Bienvenido a Free Dream":"Welcome to Free Dream","Empecemos tu viaje hacia la libertad":"Let's start your journey to freedom","Tus datos se guardan solo en este dispositivo.":"Your data is stored only on this device.","¿Cómo te llamas?":"What's your name?","Comenzar":"Start","Seguir viendo el ejemplo":"Keep viewing the sample","¡Bienvenido, {n}! Agrega tu primera deuda.":"Welcome, {n}! Add your first debt.","Presupuesto de deudas actualizado":"Debt budget updated","¿Borrar todos tus datos de este dispositivo?":"Erase all your data from this device?","Presupuesto guardado":"Budget saved","Ajustes guardados":"Settings saved","Soñador":"Dreamer","Aprendiz":"Apprentice","Ahorrador":"Saver","Estratega":"Strategist","Guerrero de deudas":"Debt warrior","Cazador de intereses":"Interest hunter","Maestro del presupuesto":"Budget master","Casi libre":"Almost free","Libre":"Free","¡Cada pago te acerca a la libertad!":"Every payment brings you closer to freedom!","¡Eso es! Un golpe más contra la deuda.":"That's it! Another hit against the debt.","Tu yo del futuro te lo agradece.":"Your future self thanks you.","¡Constancia de campeón!":"Champion consistency!","Menos intereses, más sueños.":"Less interest, more dreams.","¡Vas ganando la partida!":"You're winning the game!","Paso a paso se llega lejos.":"Step by step, you go far.","Vivienda":"Housing","Comida":"Food","Transporte":"Transportation","Servicios":"Utilities","Salud":"Health","Ocio":"Fun","Ropa":"Clothing","Educación":"Education","Suscripciones":"Subscriptions","Otros":"Other","Negocio":"Business","Extra":"Extra","Regalo":"Gift","Tarjeta de crédito":"Credit card","Línea de crédito":"Line of credit","Préstamo":"Loan","Hipoteca":"Mortgage","Familiar":"Family","Otro":"Other","Plan trazado":"Plan drawn","Registra 2 o más deudas":"Add 2 or more debts","Primer paso":"First step","Registra tu primer pago":"Log your first payment","10 % pagado":"10% paid","Paga el 10 % de tu deuda total":"Pay off 10% of your total debt","25 % pagado":"25% paid","Un cuarto del camino":"A quarter of the way","Mitad del camino":"Halfway there","Paga el 50 %":"Pay off 50%","75 % pagado":"75% paid","La meta se ve cerca":"The goal is in sight","Jefe derrotado":"Boss defeated","Liquida una deuda completa":"Pay off a whole debt","Constancia":"Consistency","3 meses seguidos pagando":"3 months in a row paying","Disciplina":"Discipline","6 meses seguidos pagando":"6 months in a row paying","Contador":"Bookkeeper","Registra 10 movimientos":"Log 10 transactions","Mapa del dinero":"Money map","Registra tu ingreso fijo y 3 gastos fijos":"Add your fixed income and 3 fixed expenses","Cazahormigas":"Leak hunter","Identifica 3 gastos hormiga":"Spot 3 small leaks","¡LIBRE!":"FREE!","Deuda total en cero":"Total debt at zero","por hora":"per hour","al día":"per day","a la semana":"per week","cada 2 semanas":"every 2 weeks","al año":"per year","Inicio":"Home","Deudas":"Debts","Libertad":"Freedom","Perfil":"Profile","Conservador":"Conservative","Moderado":"Moderate","Ambicioso":"Ambitious","Pago de deuda":"Debt payment","Nuevo ingreso fijo":"New fixed income","Editar ingreso fijo":"Edit fixed income","Nuevo gasto hormiga":"New small leak","Editar gasto hormiga":"Edit small leak","Nuevo gasto fijo":"New fixed expense","Editar gasto fijo":"Edit fixed expense"},"fr":{"{n} mes":"{n} mois","{n} meses":"{n} mois","Préstamo del coche":"Prêt auto","Préstamo estudiantil":"Prêt étudiant","Préstamo familiar":"Prêt familial","Nómina":"Paie","Alquiler":"Loyer","Supermercado":"Épicerie","Gasolina":"Essence","Cine y cena":"Cinéma et souper","Luz e internet":"Électricité et internet","Salario":"Salaire","Trabajos de fin de semana":"Petits boulots de fin de semaine","Seguro del coche":"Assurance auto","Café de la mañana":"Café du matin","Logro desbloqueado":"Succès débloqué","Cancelar":"Annuler","¡Subiste de nivel!":"Niveau supérieur!","Sigue así. Cada nivel es una prueba de que puedes con esto.":"Continue comme ça. Chaque niveau prouve que tu en es capable.","¡Vamos!":"Allons-y!","Proyección de inversión a {n} años":"Projection de placement sur {n} ans","hoy":"aujourd'hui","{n} años":"{n} ans","Ver nivel y logros":"Voir le niveau et les succès","Estás viendo <b>datos de ejemplo</b>. Juega con ellos o empieza con los tuyos.":"Tu vois des <b>données d'exemple</b>. Joue avec ou commence avec les tiennes.","Empezar con mis datos":"Commencer avec mes données","Secciones":"Sections","Hola":"Bonjour","Hola, {name}":"Bonjour, {name}","Tu viaje empieza aquí":"Ton parcours commence ici","Agrega tus deudas para trazar el mapa hacia tu libertad financiera. Cada pago que registres te dará XP, logros y te acercará a la meta.":"Ajoute tes dettes pour tracer la carte vers ta liberté financière. Chaque paiement enregistré te donne de l'XP, des succès et te rapproche du but.","Agregar mi primera deuda":"Ajouter ma première dette","Progreso hacia la libertad":"Progrès vers la liberté","camino a la libertad":"en route vers la liberté","¡Libre!":"Libre!","{p} pagado":"{p} payé","Te queda por pagar":"Reste à payer","Tú":"Toi","Ya pagado":"Déjà payé","Libre en":"Libre dans","¡Ya!":"Déjà!","Racha":"Série","Con {a} al mes serás libre en {b}.":"Avec {a} par mois, tu seras libre en {b}.","Con el presupuesto actual la deuda no baja lo suficiente. Sube tu presupuesto mensual en Deudas.":"Avec ton budget actuel, la dette ne baisse pas assez. Augmente ton budget mensuel dans Dettes.","Jefe actual":"Boss actuel","{n} % interés":"{n} % d'intérêt","Quedan {a} de {b}":"Il reste {a} sur {b}","Atacar: registrar pago":"Attaquer : enregistrer un paiement","Este mes":"Ce mois-ci","Ver movimientos":"Voir les transactions","Ingresos":"Revenus","Gastos":"Dépenses","Balance":"Solde","Ingresos brutos":"Revenu brut","Impuestos y deducciones (estimado)":"Impôts et retenues (estimation)","Ingresos netos":"Revenu net","Ingresos fijos":"Revenus fixes","Gastos fijos":"Dépenses fixes","Gastos hormiga":"Petites dépenses","Disponible cada mes":"Disponible chaque mois","Tu dinero fijo":"Ton argent régulier","Registra tu salario y tus gastos fijos para saber cuánto puedes destinar cada mes a tus deudas.":"Ajoute ton salaire et tes dépenses fixes pour savoir combien tu peux consacrer à tes dettes chaque mois.","Registrar fijos":"Ajouter les fixes","Tu mes típico":"Ton mois typique","Fijos":"Fixes","Nivel {n}":"Niveau {n}","{a} de {b} logros":"{a} succès sur {b}","siguiente":"prochain","Logros":"Succès","Plan de pago":"Plan de remboursement","Deuda":"Dette","Estrategia":"Stratégie","Avalancha":"Avalanche","Bola de nieve":"Boule de neige","Atacas primero la deuda con el interés más alto. Es la que menos intereses te cuesta.":"Tu attaques d'abord la dette au taux le plus élevé. C'est ce qui te coûte le moins d'intérêts.","Atacas primero la deuda más pequeña. Ganas batallas rápido y eso motiva.":"Tu attaques d'abord la plus petite dette. Les victoires rapides te motivent.","Presupuesto mensual para deudas":"Budget mensuel pour les dettes","Guardar":"Enregistrer","Tu presupuesto es menor que la suma de pagos mínimos ({a}). El plan usa los mínimos.":"Ton budget est inférieur au total des paiements minimums ({a}). Le plan utilise les minimums.","Intereses":"Intérêts","Fecha":"Date","Saldo total de deuda por mes":"Solde total de la dette par mois","Esta estrategia te ahorra {a} en intereses frente a la otra.":"Cette stratégie t'économise {a} d'intérêts par rapport à l'autre.","La otra estrategia ahorraría {a} en intereses, pero esta te da victorias antes.":"L'autre stratégie économiserait {a} d'intérêts, mais celle-ci te donne des victoires plus tôt.","Etapas del viaje":"Étapes du parcours","No tienes deudas activas.":"Tu n'as aucune dette active.","Agregar deuda":"Ajouter une dette","Jefes derrotados":"Boss vaincus","Liquidada":"Remboursée","Interés alto":"Taux élevé","Saldo {a} de {b}":"Solde {a} sur {b}","{n} % anual":"{n} % par an","Mín.":"Min.","Cae en {d}":"Tombe en {d}","Liquidada el {d}":"Remboursée le {d}","Registrar pago":"Enregistrer un paiement","Editar":"Modifier","Vista":"Vue","Del mes":"Du mois","Fijos y hormiga":"Fixes et petites dépenses","Deducciones estimadas para {p}: {r} de tu salario bruto.":"Retenues estimées pour {p} : {r} de ton salaire brut.","Ver detalle":"Voir le détail","Usando una retención manual de {r}.":"Retenue manuelle de {r} utilisée.","Tienes ingresos en bruto. Elige tu provincia en Perfil para estimar lo que recibes en neto.":"Tu as des revenus bruts. Choisis ta province dans Profil pour estimer ce que tu reçois en net.","Ir a Perfil":"Aller au profil","{n} h/semana":"{n} h/semaine","bruto":"brut","neto":"net","neto al mes":"net par mois","al mes":"par mois","Si recortas tus gastos hormiga a la mitad y lo mandas a tus deudas, serás libre {m} antes y te ahorras {a} en intereses.":"Si tu coupes tes petites dépenses de moitié et envoies ça sur tes dettes, tu seras libre {m} plus tôt et tu économiseras {a} d'intérêts.","Tus pagos mínimos suman {a}. Puedes destinar hasta {b} al mes a tus deudas (comida variable aparte).":"Tes paiements minimums totalisent {a}. Tu peux consacrer jusqu'à {b} par mois à tes dettes (hors épicerie variable).","Usar {a} como presupuesto de deudas":"Utiliser {a} comme budget de dettes","Lo disponible no alcanza para los pagos mínimos ({a}). Revisa tus gastos hormiga y fijos.":"Le disponible ne couvre pas tes paiements minimums ({a}). Revois tes petites dépenses et tes dépenses fixes.","Ingreso":"Revenu","Agrega tu salario: por hora, mensual o anual, en bruto. También tus ingresos extra que se repiten.":"Ajoute ton salaire : à l'heure, mensuel ou annuel, en brut. Ajoute aussi tes revenus supplémentaires récurrents.","Gasto":"Dépense","Alquiler, servicios, seguros, transporte: lo que pagas siempre.":"Loyer, services, assurances, transport : ce que tu paies toujours.","Hormiga":"Petite dépense","<b>Los gastos que no vemos pero que suman.</b> Te cuestan {a} al mes, {b} al año.":"<b>Les dépenses qu'on ne voit pas mais qui s'accumulent.</b> Elles te coûtent {a} par mois, {b} par an.","Agregar rápido":"Ajout rapide","Estimación de tu salario neto":"Estimation de ton salaire net","Salario bruto anual":"Salaire brut annuel","Impuesto federal":"Impôt fédéral","Impuesto provincial":"Impôt provincial","RRQ (pensión de Quebec)":"RRQ (Régime de rentes du Québec)","CPP (pensión de Canadá)":"RPC (Régime de pensions du Canada)","Seguro de empleo (EI)":"Assurance-emploi (AE)","RQAP (seguro parental)":"RQAP (assurance parentale)","Neto anual":"Net annuel","Neto al mes":"Net par mois","Neto cada 2 semanas":"Net aux 2 semaines","Deducción total":"Retenues totales","Es una estimación con tablas aproximadas de 2025-2026. No incluye RRSP, pensión de empresa, seguro médico ni otros descuentos de tu nómina, así que tu pago real puede variar.":"C'est une estimation basée sur des tables approximatives 2025-2026. Elle n'inclut pas le REER, le régime de retraite de l'employeur, l'assurance collective ni d'autres retenues sur ta paie; ton salaire réel peut varier.","Entendido":"Compris","Mes anterior":"Mois précédent","Mes siguiente":"Mois suivant","A deudas":"Aux dettes","Te queda":"Il te reste","¿En qué se va el dinero?":"Où va l'argent?","Movimientos":"Transactions","Borrar movimiento":"Supprimer la transaction","Sin movimientos este mes.":"Aucune transaction ce mois-ci.","Registrar lo que entra y sale te ayuda a encontrar dinero extra para tus deudas.":"Suivre ce qui entre et sort t'aide à trouver de l'argent pour tes dettes.","Modo Libertad":"Mode Liberté","¡Eres libre! Ahora haz crecer tu dinero":"Tu es libre! Maintenant, fais fructifier ton argent","Lo que te espera al cruzar la meta":"Ce qui t'attend à la ligne d'arrivée","Ya no debes nada. Los {a} que cada mes iban a deudas ahora pueden trabajar para ti.":"Tu ne dois plus rien. Les {a} qui allaient aux dettes chaque mois peuvent maintenant travailler pour toi.","Se activa cuando liquides tus deudas.":"Se débloque quand tu auras remboursé tes dettes.","Se activa cuando liquides tus deudas, previsto para {d}.":"Se débloque quand tu auras remboursé tes dettes, prévu pour {d}.","Mira lo que lograrás invirtiendo los mismos {a} al mes.":"Vois ce que tu bâtiras en investissant les mêmes {a} par mois.","Si inviertes {a} al mes":"Si tu investis {a} par mois","Define tu presupuesto mensual en Deudas para ver la proyección.":"Définis ton budget mensuel dans Dettes pour voir la projection.","Lo que aportas":"Tes cotisations","Escenario":"Scénario","Solo aportado":"Cotisations seulement","Tu ruta para crecer":"Ta route vers la croissance","Escudo de emergencia.":"Bouclier d'urgence.","Ahorra de 3 a 6 meses de gastos en una cuenta de ahorro con liquidez. Es lo que evita volver a endeudarte.":"Épargne de 3 à 6 mois de dépenses dans un compte d'épargne accessible. C'est ce qui t'évite de t'endetter à nouveau.","Según tus gastos, unos {a} a {b}.":"Selon tes dépenses, environ {a} à {b}.","TFSA y RRSP.":"CELI et REER.","Jubilación con ventaja fiscal.":"Retraite avec avantage fiscal.","En Canadá, la TFSA hace crecer tu dinero libre de impuestos y la RRSP te devuelve impuestos hoy. Si tu empresa iguala aportes (group RRSP), aprovéchalo primero.":"Au Canada, le CELI fait fructifier ton argent à l'abri de l'impôt et le REER te donne un remboursement d'impôt aujourd'hui. Si ton employeur verse une contribution égale (REER collectif), profites-en d'abord.","Si tu empresa iguala aportes o tu país tiene planes con deducción, aprovéchalos primero: es rentabilidad garantizada.":"Si ton employeur égale tes cotisations ou si ton pays offre des régimes déductibles, utilise-les d'abord : c'est un rendement garanti.","Fondos indexados de bajo coste.":"Fonds indiciels à faibles frais.","Un ETF diversificado todo en uno dentro de tu TFSA es una forma sencilla de invertir cada mes con comisiones bajas.":"Un FNB diversifié tout-en-un dans ton CELI est une façon simple d'investir chaque mois avec de faibles frais.","Invierte cada mes de forma automática en un fondo indexado global con comisiones bajas. Diversificas sin elegir acciones.":"Investis automatiquement chaque mois dans un fonds indiciel mondial à faibles frais. Tu te diversifies sans choisir d'actions.","FHSA para tu primera casa.":"CELIAPP pour ta première maison.","Si aún no tienes vivienda, la FHSA combina lo mejor de la TFSA y la RRSP para ahorrar la entrada.":"Si tu n'es pas encore propriétaire, le CELIAPP combine le meilleur du CELI et du REER pour épargner ta mise de fonds.","Metas con nombre.":"Objectifs nommés.","Vivienda, estudios, viajes: separa cada meta con su plazo. Lo de corto plazo, en productos seguros.":"Maison, études, voyages : donne à chaque objectif son échéance. Le court terme, dans des produits sûrs.","No vuelvas atrás.":"Ne recule pas.","Paga la tarjeta completa cada mes. Si una compra necesita crédito, ahórrala primero.":"Paie ta carte au complet chaque mois. Si un achat demande du crédit, épargne d'abord.","Contenido educativo, no asesoría financiera. Los rendimientos son supuestos anuales promedio, no garantías; las inversiones pueden perder valor.":"Contenu éducatif, pas un conseil financier. Les rendements sont des moyennes annuelles supposées, pas des garanties; les placements peuvent perdre de la valeur.","Fuera de Canadá":"Hors du Canada","{a} XP para el nivel {b}. Ganas XP con cada pago (más cuanto más grande el avance), al liquidar una deuda (+150) y con cada logro (+50).":"{a} XP avant le niveau {b}. Tu gagnes de l'XP à chaque paiement (plus le progrès est grand, plus tu en gagnes), en remboursant une dette (+150) et avec chaque succès (+50).","Ajustes":"Réglages","Idioma":"Langue","Tu nombre":"Ton prénom","Moneda":"Devise","Provincia":"Province","Retención aproximada sobre ingresos brutos (%)":"Retenue approximative sur le revenu brut (%)","La provincia se usa para estimar impuestos, CPP/RRQ y EI de tus ingresos en bruto.":"La province sert à estimer l'impôt, le RPC/RRQ et l'AE sur ton revenu brut.","Conseguido":"Obtenu","Tus datos":"Tes données","Todo se guarda solo en este dispositivo. Haz copias de seguridad para pasar tus datos a otro dispositivo. La sincronización automática llegará en una próxima versión.":"Tout est enregistré seulement sur cet appareil. Fais des sauvegardes pour transférer tes données. La synchronisation automatique arrivera dans une prochaine version.","Exportar copia":"Exporter une sauvegarde","Importar copia":"Importer une sauvegarde","Borrar todo":"Tout effacer","Nueva deuda":"Nouvelle dette","Editar deuda":"Modifier la dette","Nombre":"Nom","Ej. Tarjeta Visa":"Ex. Carte Visa","Tipo":"Type","Saldo actual":"Solde actuel","Interés anual %":"Taux annuel %","Pago mínimo mensual":"Paiement minimum mensuel","Monto original":"Montant initial","Agregar":"Ajouter","Eliminar":"Supprimer","Deuda agregada al mapa":"Dette ajoutée à la carte","Deuda actualizada":"Dette mise à jour","¿Eliminar \"{n}\" y sus pagos?":"Supprimer « {n} » et ses paiements?","Deuda eliminada":"Dette supprimée","Monto pagado":"Montant payé","Liquidar todo ({a})":"Tout rembourser ({a})","¡{n} derrotado!":"{n} vaincu!","Ej. Salario":"Ex. Salaire","Ej. Alquiler":"Ex. Loyer","Monto":"Montant","Frecuencia":"Fréquence","Horas por semana":"Heures par semaine","Tipo de monto":"Type de montant","Bruto (antes de impuestos)":"Brut (avant impôts)","Neto (lo que recibes)":"Net (ce que tu reçois)","Categoría":"Catégorie","Es un gasto hormiga":"C'est une petite dépense","Equivale a {a} al mes y {b} al año.":"Ça représente {a} par mois et {b} par an.","Neto estimado: {a} al mes.":"Net estimé : {a} par mois.","Elige tu provincia en Perfil para estimar el neto.":"Choisis ta province dans Profil pour estimer le net.","Sin nombre":"Sans nom","¡Hormiga detectada!":"Petite dépense repérée!","Fijo registrado":"Élément fixe ajouté","Guardado":"Enregistré","Eliminado":"Supprimé","Nuevo ingreso":"Nouveau revenu","Nuevo gasto":"Nouvelle dépense","Nota":"Note","Opcional":"Facultatif","Ingreso registrado":"Revenu enregistré","Gasto registrado":"Dépense enregistrée","Copia de seguridad":"Sauvegarde","Guarda este texto en un lugar seguro. Para restaurarlo usa “Importar copia”.":"Garde ce texte en lieu sûr. Pour le restaurer, utilise « Importer une sauvegarde ».","Copiar":"Copier","Descargar archivo":"Télécharger le fichier","Cerrar":"Fermer","Copia copiada al portapapeles":"Sauvegarde copiée dans le presse-papiers","Selecciona y copia el texto":"Sélectionne et copie le texte","No se pudo descargar. Usa Copiar.":"Téléchargement impossible. Utilise Copier.","Pega el texto de tu copia o elige el archivo. Reemplazará los datos de este dispositivo.":"Colle le texte de ta sauvegarde ou choisis le fichier. Il remplacera les données de cet appareil.","Importar":"Importer","Datos importados":"Données importées","Ese texto no es una copia válida de Free Dream":"Ce texte n'est pas une sauvegarde Free Dream valide","Bienvenido a Free Dream":"Bienvenue dans Free Dream","Empecemos tu viaje hacia la libertad":"Commençons ton parcours vers la liberté","Tus datos se guardan solo en este dispositivo.":"Tes données sont enregistrées seulement sur cet appareil.","¿Cómo te llamas?":"Comment t'appelles-tu?","Comenzar":"Commencer","Seguir viendo el ejemplo":"Continuer avec l'exemple","¡Bienvenido, {n}! Agrega tu primera deuda.":"Bienvenue, {n}! Ajoute ta première dette.","Presupuesto de deudas actualizado":"Budget de dettes mis à jour","¿Borrar todos tus datos de este dispositivo?":"Effacer toutes tes données de cet appareil?","Presupuesto guardado":"Budget enregistré","Ajustes guardados":"Réglages enregistrés","Soñador":"Rêveur","Aprendiz":"Apprenti","Ahorrador":"Épargnant","Estratega":"Stratège","Guerrero de deudas":"Guerrier des dettes","Cazador de intereses":"Chasseur d'intérêts","Maestro del presupuesto":"Maître du budget","Casi libre":"Presque libre","Libre":"Libre","¡Cada pago te acerca a la libertad!":"Chaque paiement te rapproche de la liberté!","¡Eso es! Un golpe más contra la deuda.":"C'est ça! Un coup de plus contre la dette.","Tu yo del futuro te lo agradece.":"Ton toi du futur te remercie.","¡Constancia de campeón!":"Une constance de champion!","Menos intereses, más sueños.":"Moins d'intérêts, plus de rêves.","¡Vas ganando la partida!":"Tu es en train de gagner la partie!","Paso a paso se llega lejos.":"Pas à pas, on va loin.","Vivienda":"Logement","Comida":"Alimentation","Transporte":"Transport","Servicios":"Services","Salud":"Santé","Ocio":"Loisirs","Ropa":"Vêtements","Educación":"Éducation","Suscripciones":"Abonnements","Otros":"Autres","Negocio":"Entreprise","Extra":"Extra","Regalo":"Cadeau","Tarjeta de crédito":"Carte de crédit","Línea de crédito":"Marge de crédit","Préstamo":"Prêt","Hipoteca":"Hypothèque","Familiar":"Famille","Otro":"Autre","Plan trazado":"Plan tracé","Registra 2 o más deudas":"Ajoute 2 dettes ou plus","Primer paso":"Premier pas","Registra tu primer pago":"Enregistre ton premier paiement","10 % pagado":"10 % payé","Paga el 10 % de tu deuda total":"Rembourse 10 % de ta dette totale","25 % pagado":"25 % payé","Un cuarto del camino":"Le quart du chemin","Mitad del camino":"À mi-chemin","Paga el 50 %":"Rembourse 50 %","75 % pagado":"75 % payé","La meta se ve cerca":"Le but est en vue","Jefe derrotado":"Boss vaincu","Liquida una deuda completa":"Rembourse une dette au complet","Constancia":"Constance","3 meses seguidos pagando":"3 mois de paiements d'affilée","Disciplina":"Discipline","6 meses seguidos pagando":"6 mois de paiements d'affilée","Contador":"Comptable","Registra 10 movimientos":"Enregistre 10 transactions","Mapa del dinero":"Carte de l'argent","Registra tu ingreso fijo y 3 gastos fijos":"Ajoute ton revenu fixe et 3 dépenses fixes","Cazahormigas":"Chasseur de fuites","Identifica 3 gastos hormiga":"Repère 3 petites dépenses","¡LIBRE!":"LIBRE!","Deuda total en cero":"Dette totale à zéro","por hora":"de l'heure","al día":"par jour","a la semana":"par semaine","cada 2 semanas":"aux 2 semaines","al año":"par an","Inicio":"Accueil","Deudas":"Dettes","Libertad":"Liberté","Perfil":"Profil","Conservador":"Prudent","Moderado":"Modéré","Ambicioso":"Audacieux","Pago de deuda":"Paiement de dette","Nuevo ingreso fijo":"Nouveau revenu fixe","Editar ingreso fijo":"Modifier le revenu fixe","Nuevo gasto hormiga":"Nouvelle petite dépense","Editar gasto hormiga":"Modifier la petite dépense","Nuevo gasto fijo":"Nouvelle dépense fixe","Editar gasto fijo":"Modifier la dépense fixe"}};
 
 /* ---------- Arranque ---------- */
 (async () => {
-  S = (await loadState()) || sampleState();
-  S.recurring = S.recurring || [];
+  const stored = await loadState();
+  LANG = (stored && stored.profile && stored.profile.lang) || detectLang();
+  S = migrate(stored || sampleState(LANG));
+  LANG = S.profile.lang;
   const h = (location.hash || "").slice(1);
-  if (["inicio", "deudas", "movimientos", "libertad", "perfil"].includes(h)) tab = h;
+  if (Object.keys(TAB_LABELS).includes(h)) tab = h;
   render();
 })();
 })();
