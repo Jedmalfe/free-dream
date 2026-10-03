@@ -3,12 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1b2340">
+<meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10152b" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Planifica, paga tus deudas jugando y aprende a invertir para ser libre.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Free Dream">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>Free Dream</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,8 +55,15 @@
 }
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-.app { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 96px; display: flex; flex-direction: column; gap: 16px; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; overscroll-behavior-y: none; }
+.app { max-width: 560px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); padding-block: 12px calc(96px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
+/* Pantallas grandes (iPad, escritorio): dos columnas */
+@media (min-width: 860px) {
+  .app { max-width: 1040px; }
+  #view > .stack { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 16px; }
+  #view > .stack > .hero, #view > .stack > .wide { grid-column: 1 / -1; }
+  nav.tabs .in { max-width: 640px; }
+}
 h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
 h2 { font-size: 1.35rem; font-weight: 800; }
 h3 { font-size: 1.05rem; font-weight: 700; }
@@ -110,18 +121,18 @@ p { margin: 0; }
 .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .82rem; color: var(--muted); }
 
 /* Botones y formularios */
-button, .btn { font: inherit; font-weight: 700; border: 0; border-radius: 12px; padding: 11px 16px; cursor: pointer; background: var(--surface-2); color: var(--ink); transition: transform .08s, filter .15s; }
+button, .btn { font: inherit; font-weight: 700; border: 0; border-radius: 12px; padding: 11px 16px; min-height: 44px; touch-action: manipulation; cursor: pointer; background: var(--surface-2); color: var(--ink); transition: transform .08s, filter .15s; }
 button:active { transform: scale(.97); }
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
 .primary { background: var(--sun); color: var(--sun-ink); }
 .xp-btn { background: var(--xp); color: #fff; }
 .ghost { background: transparent; border: 1px solid var(--line); }
 .danger { background: var(--debt-soft); color: var(--debt); }
-.btn-sm { padding: 7px 12px; font-size: .85rem; border-radius: 10px; }
+.btn-sm { padding: 7px 12px; font-size: .85rem; border-radius: 10px; min-height: 38px; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 form { display: flex; flex-direction: column; gap: 12px; }
 label.f { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: .88rem; }
-input, select, textarea { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0; }
+input, select, textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0; }
 textarea { min-height: 120px; font-size: .8rem; font-family: ui-monospace, monospace; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border-radius: 12px; padding: 4px; gap: 4px; }
 .seg button { background: transparent; padding: 9px; font-size: .9rem; }
@@ -130,7 +141,7 @@ textarea { min-height: 120px; font-size: .8rem; font-family: ui-monospace, monos
 /* Movimientos */
 .tx { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .tx:last-child { border-bottom: 0; }
-.tx .ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex: none; font-size: 1.1rem; background: var(--surface-2); }
+.tx .ic, .rec .ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex: none; font-size: 1.1rem; background: var(--surface-2); }
 .tx .grow { flex: 1; min-width: 0; }
 .tx .grow p:first-child { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .amt-in { color: var(--good); font-weight: 800; }
@@ -167,8 +178,21 @@ nav.tabs button[aria-current="page"] { color: var(--ink); background: var(--surf
 
 /* Modal, toast, confeti */
 .modal { position: fixed; inset: 0; z-index: 40; background: rgba(10,14,30,.55); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
-.modal .sheet { background: var(--surface); color: var(--ink); width: 100%; max-width: 520px; border-radius: 20px; padding: 20px 16px; max-height: 90%; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-@media (min-width: 600px) { .modal { align-items: center; } }
+.modal .sheet { background: var(--surface); color: var(--ink); width: 100%; max-width: 520px; border-radius: 20px; padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px)); max-height: 88dvh; overscroll-behavior: contain; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+.modal { padding-bottom: 0; }
+@media (max-width: 599px) { .modal .sheet { border-radius: 20px 20px 0 0; } }
+@media (min-width: 600px) { .modal { align-items: center; padding-bottom: 16px; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 6px 12px; font-size: .82rem; font-weight: 700; min-height: 36px; }
+.rec { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); width: 100%; text-align: left; background: transparent; border-radius: 0; min-height: 0; font-weight: 400; }
+.rec:last-child { border-bottom: 0; }
+.rec .grow { flex: 1; min-width: 0; }
+.rec .grow p:first-child { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rec .right { text-align: right; flex: none; }
+.ant { background: var(--sun-soft); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.flow { display: flex; flex-direction: column; gap: 6px; font-size: .9rem; }
+.flow .row { padding: 2px 0; }
+.flow .total { border-top: 2px solid var(--line); padding-top: 8px; font-weight: 800; }
 .toasts { position: fixed; left: 0; right: 0; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; padding-inline: 16px; }
 .toast { background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 700; max-width: 480px; box-shadow: var(--shadow); animation: pop .35s cubic-bezier(.2,1.4,.4,1); }
 .toast .xp { color: var(--sun); }
@@ -297,11 +321,21 @@ function sampleState() {
     v: 1, demo: true,
     profile: { name: "Ejemplo", currency: "USD" },
     plan: { strategy: "avalanche", budget: 650 },
-    debts, payments, txns, xp: 640, ach: { first_payment: d(3, 5), plan: d(4, 1), p10: d(2, 5), debt_killed: d(1, 20), streak3: d(1, 22), p25: d(1, 22) }
+    debts, payments, txns, xp: 640,
+    recurring: [
+      { id: "r1", kind: "ingreso", name: "Salario", amount: 24, freq: "hora", hours: 40, category: "Salario" },
+      { id: "r2", kind: "ingreso", name: "Trabajos de fin de semana", amount: 300, freq: "mes", category: "Extra" },
+      { id: "r3", kind: "gasto", name: "Alquiler", amount: 850, freq: "mes", category: "Vivienda" },
+      { id: "r4", kind: "gasto", name: "Seguro del coche", amount: 1440, freq: "año", category: "Transporte" },
+      { id: "r5", kind: "gasto", name: "Netflix", amount: 16.49, freq: "mes", category: "Suscripciones", ant: true },
+      { id: "r6", kind: "gasto", name: "Spotify", amount: 11.99, freq: "mes", category: "Suscripciones", ant: true },
+      { id: "r7", kind: "gasto", name: "Café de la mañana", amount: 4.5, freq: "dia", category: "Comida", ant: true },
+      { id: "r8", kind: "gasto", name: "Delivery", amount: 25, freq: "semana", category: "Comida", ant: true }
+    ], ach: { first_payment: d(3, 5), plan: d(4, 1), p10: d(2, 5), debt_killed: d(1, 20), streak3: d(1, 22), p25: d(1, 22) }
   };
 }
 function emptyState(name, currency) {
-  return { v: 1, demo: false, profile: { name, currency }, plan: { strategy: "avalanche", budget: 0 }, debts: [], payments: [], txns: [], xp: 0, ach: {} };
+  return { v: 1, demo: false, profile: { name, currency }, plan: { strategy: "avalanche", budget: 0 }, debts: [], payments: [], txns: [], recurring: [], xp: 0, ach: {} };
 }
 
 /* ---------- Juego: niveles, XP, logros ---------- */
@@ -323,6 +357,8 @@ const ACH = [
   { id: "streak3", e: "📅", t: "Constancia", d: "3 meses seguidos pagando" },
   { id: "streak6", e: "💎", t: "Disciplina", d: "6 meses seguidos pagando" },
   { id: "tracker", e: "🧾", t: "Contador", d: "Registra 10 movimientos" },
+  { id: "budget_map", e: "🧭", t: "Mapa del dinero", d: "Registra tu ingreso fijo y 3 gastos fijos" },
+  { id: "ants", e: "🐜", t: "Cazahormigas", d: "Identifica 3 gastos hormiga" },
   { id: "free", e: "🕊️", t: "¡LIBRE!", d: "Deuda total en cero" }
 ];
 const CHEERS = [
@@ -361,6 +397,8 @@ function checkAchievements() {
     debt_killed: S.debts.some(d => d.balance <= 0 && d.original > 0),
     streak3: s >= 3, streak6: s >= 6,
     tracker: S.txns.length >= 10,
+    budget_map: S.recurring.some(r => r.kind === "ingreso") && S.recurring.filter(r => r.kind === "gasto").length >= 3,
+    ants: S.recurring.filter(r => r.ant).length >= 3,
     free: S.debts.length > 0 && t.bal <= 0
   };
   let delay = 900;
@@ -373,6 +411,36 @@ function checkAchievements() {
     }
   }
 }
+
+/* ---------- Ingresos y gastos fijos ---------- */
+const FREQ = { hora: "por hora", dia: "al día", semana: "a la semana", quincena: "cada 2 semanas", mes: "al mes", año: "al año" };
+function monthly(r) {
+  const f = { hora: (r.hours || 40) * 52 / 12, dia: 365 / 12, semana: 52 / 12, quincena: 26 / 12, mes: 1, año: 1 / 12 }[r.freq] || 1;
+  return r.amount * f;
+}
+function flow() {
+  const R = S.recurring || [];
+  const sum = arr => arr.reduce((a, r) => a + monthly(r), 0);
+  const inc = sum(R.filter(r => r.kind === "ingreso"));
+  const fixed = sum(R.filter(r => r.kind === "gasto" && !r.ant));
+  const ants = sum(R.filter(r => r.kind === "gasto" && r.ant));
+  const mins = S.debts.filter(d => d.balance > 0).reduce((a, d) => a + d.minPay, 0);
+  return { inc, fixed, ants, mins, free: inc - fixed - ants };
+}
+const PRESETS = [
+  { name: "Netflix", amount: 16.49, freq: "mes", category: "Suscripciones", e: "📺" },
+  { name: "Spotify", amount: 11.99, freq: "mes", category: "Suscripciones", e: "🎧" },
+  { name: "Disney+", amount: 11.99, freq: "mes", category: "Suscripciones", e: "🏰" },
+  { name: "Amazon Prime", amount: 9.99, freq: "mes", category: "Suscripciones", e: "📦" },
+  { name: "YouTube Premium", amount: 13.99, freq: "mes", category: "Suscripciones", e: "▶️" },
+  { name: "iCloud", amount: 3.99, freq: "mes", category: "Suscripciones", e: "☁️" },
+  { name: "Xbox / PlayStation", amount: 17.99, freq: "mes", category: "Suscripciones", e: "🎮" },
+  { name: "Café", amount: 4.5, freq: "dia", category: "Comida", e: "☕" },
+  { name: "Delivery", amount: 25, freq: "semana", category: "Comida", e: "🛵" },
+  { name: "Snacks y antojos", amount: 3, freq: "dia", category: "Comida", e: "🍫" },
+  { name: "Gimnasio", amount: 45, freq: "mes", category: "Salud", e: "🏋️" },
+  { name: "Apps y juegos", amount: 10, freq: "mes", category: "Ocio", e: "📱" }
+];
 
 /* ---------- Simulación del plan de pago ---------- */
 function simulate(debts, budget, strategy) {
@@ -526,11 +594,23 @@ function vInicio() {
       <div class="bar"><div style="width:${(100 * (1 - boss.balance / boss.original)).toFixed(1)}%"></div></div>
       <div class="row"><span class="small muted num">Quedan ${money(boss.balance)} de ${money(boss.original)}</span><button class="xp-btn btn-sm" data-act="pay" data-id="${boss.id}">Atacar: registrar pago</button></div></section>` : ""}
     ${xpCard(li, s)}
+    ${flowCard()}
     <section class="card"><div class="row"><h3>Este mes</h3><button class="btn-sm ghost" data-tab-go="movimientos">Ver movimientos</button></div>
       <div class="grid3"><div class="stat"><span class="label">Ingresos</span><strong class="num" style="color:var(--good)">${money(inc, 1)}</strong></div>
       <div class="stat"><span class="label">Gastos</span><strong class="num">${money(out, 1)}</strong></div>
       <div class="stat"><span class="label">Balance</span><strong class="num">${money(inc - out, 1)}</strong></div></div></section>
   </div>`;
+}
+function flowCard() {
+  const f = flow();
+  if (!f.inc && !f.fixed && !f.ants) return `<section class="card"><h3>Tu dinero fijo</h3><p class="small muted">Registra tu salario y tus gastos fijos para saber cuánto puedes destinar cada mes a tus deudas.</p><button class="btn-sm primary" data-tab-go="movimientos" data-sub="fijos">Registrar fijos</button></section>`;
+  return `<section class="card"><div class="row"><h3>Tu mes típico</h3><button class="btn-sm ghost" data-tab-go="movimientos" data-sub="fijos">Fijos</button></div>
+    <div class="flow num">
+      <div class="row"><span>Ingresos fijos</span><b style="color:var(--good)">${money(f.inc, 1)}</b></div>
+      <div class="row"><span>Gastos fijos</span><b>−${money(f.fixed, 1)}</b></div>
+      <div class="row"><span>🐜 Gastos hormiga</span><b style="color:var(--debt)">−${money(f.ants, 1)}</b></div>
+      <div class="row total"><span>Disponible</span><b>${money(f.free, 1)}</b></div>
+    </div></section>`;
 }
 function xpCard(li, s) {
   const got = ACH.filter(a => S.ach[a.id]).length;
@@ -593,8 +673,48 @@ function debtCard(d, isBoss, sim) {
 const CATS_OUT = ["Vivienda", "Comida", "Transporte", "Servicios", "Salud", "Ocio", "Ropa", "Educación", "Suscripciones", "Otros"];
 const CATS_IN = ["Salario", "Negocio", "Extra", "Regalo", "Otros"];
 const CAT_IC = { Vivienda: "🏠", Comida: "🛒", Transporte: "⛽", Servicios: "💡", Salud: "🩺", Ocio: "🎬", Ropa: "👕", Educación: "📚", Suscripciones: "📺", Otros: "📦", Salario: "💼", Negocio: "🏪", Extra: "✨", Regalo: "🎁", "Pago de deuda": "⚔️" };
-let movMonth = null;
+let movMonth = null, movSub = "mes";
 function vMovs() {
+  const seg = `<div class="seg wide" role="group" aria-label="Vista"><button data-sub="mes" aria-pressed="${movSub === "mes"}">Del mes</button><button data-sub="fijos" aria-pressed="${movSub === "fijos"}">Fijos y hormiga</button></div>`;
+  if (movSub === "fijos") return `<div class="stack">${seg}${vFijos()}</div>`;
+  return `<div class="stack">${seg}${vMes()}</div>`;
+}
+function vFijos() {
+  const f = flow(), R = S.recurring;
+  const inc = R.filter(r => r.kind === "ingreso"), fixed = R.filter(r => r.kind === "gasto" && !r.ant), ants = R.filter(r => r.kind === "gasto" && r.ant);
+  const line = r => `<button class="rec" data-act="editRec" data-id="${r.id}"><div class="ic" aria-hidden="true">${CAT_IC[r.category] || "•"}</div><div class="grow"><p>${esc(r.name)}</p><p class="small muted">${money(r.amount)} ${FREQ[r.freq]}${r.freq === "hora" ? ` · ${r.hours || 40} h/semana` : ""}</p></div><div class="right"><p class="num" style="font-weight:800">${money(monthly(r))}</p><p class="small muted">al mes</p></div></button>`;
+  let antInsight = "";
+  if (f.ants > 0 && S.debts.some(d => d.balance > 0)) {
+    const base = simulate(S.debts, S.plan.budget, S.plan.strategy);
+    const half = simulate(S.debts, base.pay + f.ants / 2, S.plan.strategy);
+    const saved = base.months - half.months;
+    if (!base.stuck && saved > 0) antInsight = `<p class="small">Si recortas tus gastos hormiga a la mitad y lo mandas a tus deudas, serás libre <b>${saved} ${saved === 1 ? "mes" : "meses"} antes</b> y te ahorras ${money(base.interest - half.interest, 1)} en intereses.</p>`;
+  }
+  const sugg = Math.max(0, Math.floor(f.free));
+  return `
+    <section class="card wide"><h3>Tu mes típico</h3>
+      <div class="flow num">
+        <div class="row"><span>Ingresos fijos</span><b style="color:var(--good)">${money(f.inc)}</b></div>
+        <div class="row"><span>Gastos fijos</span><b>−${money(f.fixed)}</b></div>
+        <div class="row"><span>🐜 Gastos hormiga</span><b style="color:var(--debt)">−${money(f.ants)}</b></div>
+        <div class="row total"><span>Disponible cada mes</span><b>${money(f.free)}</b></div>
+      </div>
+      ${f.inc > 0 && S.debts.some(d => d.balance > 0) ? (sugg >= f.mins ? `<p class="small muted">Tus pagos mínimos suman ${money(f.mins)}. Puedes destinar hasta ${money(sugg)} al mes a tus deudas (comida variable aparte).</p><button class="btn-sm primary" data-act="useBudget" data-v="${sugg}">Usar ${money(sugg)} como presupuesto de deudas</button>` : `<p class="small" style="color:var(--debt)">Lo disponible no alcanza para los pagos mínimos (${money(f.mins)}). Revisa tus gastos hormiga y fijos.</p>`) : ""}
+    </section>
+    <section class="card"><div class="row"><h3>Ingresos fijos</h3><button class="btn-sm xp-btn" data-act="addRec" data-kind="ingreso">+ Ingreso</button></div>
+      ${inc.length ? `<div>${inc.map(line).join("")}</div>` : `<p class="small muted">Agrega tu salario: mensual, anual o por hora. También tus ingresos extra que se repiten.</p>`}
+    </section>
+    <section class="card"><div class="row"><h3>Gastos fijos</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto">+ Gasto</button></div>
+      ${fixed.length ? `<div>${fixed.map(line).join("")}</div>` : `<p class="small muted">Alquiler, servicios, seguros, transporte: lo que pagas siempre.</p>`}
+    </section>
+    <section class="card"><div class="row"><h3>🐜 Gastos hormiga</h3><button class="btn-sm primary" data-act="addRec" data-kind="gasto" data-ant="1">+ Hormiga</button></div>
+      <div class="ant"><p class="small"><b>Los gastos que no vemos pero que suman.</b> Te cuestan <b class="num">${money(f.ants)}</b> al mes, <b class="num">${money(f.ants * 12)}</b> al año.</p>${antInsight}</div>
+      ${ants.length ? `<div>${ants.map(line).join("")}</div>` : ""}
+      <p class="label">Agregar rápido</p>
+      <div class="chips">${PRESETS.filter(p => !ants.some(a => a.name === p.name)).map((p, i) => `<button class="chip" data-act="preset" data-i="${PRESETS.indexOf(p)}">${p.e} ${esc(p.name)}</button>`).join("")}</div>
+    </section>`;
+}
+function vMes() {
   const mk = movMonth || monthKey(today());
   const items = [
     ...S.txns.filter(x => monthKey(x.date) === mk),
@@ -609,7 +729,7 @@ function vMovs() {
   const maxC = cats.length ? cats[0][1] : 1;
   const [y, m] = mk.split("-").map(Number);
   let label = new Date(y, m - 1, 1).toLocaleDateString("es", { month: "long", year: "numeric" }); label = label[0].toUpperCase() + label.slice(1);
-  return `<div class="stack">
+  return `
     <section class="card">
       <div class="row"><button class="btn-sm ghost" data-mon="-1" aria-label="Mes anterior">‹</button><h2 style="text-align:center">${label}</h2><button class="btn-sm ghost" data-mon="1" aria-label="Mes siguiente">›</button></div>
       <div class="grid2">
@@ -624,8 +744,7 @@ function vMovs() {
     <section class="card"><h3>Movimientos</h3>
       ${items.length ? `<div>${items.map(x => `<div class="tx"><div class="ic" aria-hidden="true">${CAT_IC[x.category] || "•"}</div><div class="grow"><p>${esc(x.note || x.category)}</p><p class="small muted">${esc(x.category)} · ${new Date(x.date + "T12:00").toLocaleDateString("es", { day: "numeric", month: "short" })}</p></div><span class="num ${x.type === "ingreso" ? "amt-in" : x.type === "pago" ? "amt-pay" : "amt-out"}">${x.type === "ingreso" ? "+" : "−"}${money(x.amount)}</span>${x.type !== "pago" ? `<button class="btn-sm ghost" data-act="delTx" data-id="${x.id}" aria-label="Borrar movimiento">✕</button>` : ""}</div>`).join("")}</div>`
         : `<div class="empty"><p>Sin movimientos este mes.</p><p class="small">Registrar lo que entra y sale te ayuda a encontrar dinero extra para tus deudas.</p></div>`}
-    </section>
-  </div>`;
+    </section>`;
 }
 
 function fv(monthly, rate, months) {
@@ -773,6 +892,43 @@ function applyPayment(d, amt, date) {
   }
   checkAchievements(); save(); render();
 }
+function recForm(r, kind, ant, preset) {
+  const isNew = !r;
+  r = r || Object.assign({ kind, name: "", amount: "", freq: kind === "ingreso" ? "mes" : "mes", hours: 40, category: kind === "ingreso" ? "Salario" : ant ? "Suscripciones" : "Vivienda", ant: !!ant }, preset || {});
+  const cats = r.kind === "ingreso" ? CATS_IN : CATS_OUT;
+  const freqs = r.kind === "ingreso" ? ["hora", "semana", "quincena", "mes", "año"] : ["dia", "semana", "quincena", "mes", "año"];
+  const title = r.kind === "ingreso" ? "ingreso fijo" : r.ant ? "gasto hormiga" : "gasto fijo";
+  modal(`<h2>${isNew ? "Nuevo " + title : "Editar " + title}</h2>
+    <form id="rf">
+      <label class="f">Nombre<input id="rname" required value="${esc(r.name)}" placeholder="${r.kind === "ingreso" ? "Ej. Salario" : r.ant ? "Ej. Netflix" : "Ej. Alquiler"}"></label>
+      <div class="grid2">
+        <label class="f">Monto<input id="ramt" type="number" inputmode="decimal" step="any" min="0" required value="${r.amount}"></label>
+        <label class="f">Frecuencia<select id="rfreq">${freqs.map(k => `<option value="${k}" ${k === r.freq ? "selected" : ""}>${FREQ[k]}</option>`).join("")}</select></label>
+      </div>
+      <label class="f" id="rhoursWrap" ${r.freq === "hora" ? "" : "hidden"}>Horas por semana<input id="rhours" type="number" inputmode="decimal" step="any" min="0" value="${r.hours || 40}"></label>
+      <label class="f">Categoría<select id="rcat">${cats.map(c => `<option ${c === r.category ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+      ${r.kind === "gasto" ? `<label class="row" style="justify-content:flex-start;gap:10px;font-weight:600"><input id="rant" type="checkbox" style="width:22px;height:22px" ${r.ant ? "checked" : ""}> Es un gasto hormiga 🐜</label>` : ""}
+      <p class="small muted" id="rmonthly"></p>
+      <div class="btn-row"><button class="primary">${isNew ? "Agregar" : "Guardar"}</button><button type="button" class="ghost" data-close>Cancelar</button>${isNew ? "" : `<button type="button" class="danger" id="rdel">Eliminar</button>`}</div>
+    </form>`, (m, close) => {
+    const upd = () => {
+      const fq = $("#rfreq", m).value;
+      $("#rhoursWrap", m).hidden = fq !== "hora";
+      const v = monthly({ amount: num($("#ramt", m).value), freq: fq, hours: num($("#rhours", m).value) });
+      $("#rmonthly", m).textContent = v ? `Equivale a ${money(v)} al mes y ${money(v * 12)} al año.` : "";
+    };
+    ["#ramt", "#rfreq", "#rhours"].forEach(q => $(q, m).addEventListener("input", upd)); upd();
+    $("#rf", m).onsubmit = e => {
+      e.preventDefault();
+      const data = { name: $("#rname", m).value.trim() || "Sin nombre", amount: num($("#ramt", m).value), freq: $("#rfreq", m).value, hours: num($("#rhours", m).value) || 40, category: $("#rcat", m).value, ant: r.kind === "gasto" && !!($("#rant", m) || {}).checked };
+      if (isNew) { S.recurring.push({ id: uid(), kind: r.kind, ...data }); close(); gainXP(5, data.ant ? "¡Hormiga detectada!" : "Fijo registrado"); }
+      else { Object.assign(r, data); close(); toast("Guardado"); }
+      checkAchievements(); save(); render();
+    };
+    const del = $("#rdel", m);
+    if (del) del.onclick = () => { S.recurring = S.recurring.filter(x => x.id !== r.id); close(); save(); render(); toast("Eliminado"); };
+  });
+}
 function txForm(type) {
   const cats = type === "ingreso" ? CATS_IN : CATS_OUT;
   modal(`<h2>${type === "ingreso" ? "Nuevo ingreso" : "Nuevo gasto"}</h2>
@@ -811,7 +967,7 @@ function importData() {
       try {
         const d = JSON.parse($("#imp", m).value);
         if (!d || !Array.isArray(d.debts) || !d.profile) throw 0;
-        S = Object.assign(emptyState("", "USD"), d); close(); save(); render(); toast("Datos importados");
+        S = Object.assign(emptyState("", "USD"), d); S.recurring = S.recurring || []; close(); save(); render(); toast("Datos importados");
       } catch (e) { toast("Ese texto no es una copia válida de Free Dream"); }
     };
   });
@@ -841,13 +997,18 @@ function bind(v) {
       case "editDebt": return debtForm(d);
       case "pay": return payForm(d);
       case "addTx": return txForm(b.dataset.type);
+      case "addRec": return recForm(null, b.dataset.kind, !!b.dataset.ant);
+      case "editRec": return recForm(S.recurring.find(x => x.id === id));
+      case "preset": { const p = PRESETS[+b.dataset.i]; return recForm(null, "gasto", true, { name: p.name, amount: p.amount, freq: p.freq, category: p.category }); }
+      case "useBudget": S.plan.budget = +b.dataset.v; save(); render(); return toast("Presupuesto de deudas actualizado");
       case "delTx": S.txns = S.txns.filter(x => x.id !== id); save(); return render();
       case "export": return exportData();
       case "import": return importData();
       case "reset": return confirmBox("¿Borrar todos tus datos de este dispositivo?", "Borrar todo", () => { S = emptyState("", S.profile.currency); save(); onboarding(); render(); });
     }
   });
-  v.querySelectorAll("[data-tab-go]").forEach(b => b.onclick = () => go(b.dataset.tabGo));
+  v.querySelectorAll("[data-tab-go]").forEach(b => b.onclick = () => { if (b.dataset.sub) movSub = b.dataset.sub; go(b.dataset.tabGo); });
+  v.querySelectorAll("[data-sub]:not([data-tab-go])").forEach(b => b.onclick = () => { movSub = b.dataset.sub; render(); });
   v.querySelectorAll("[data-strat]").forEach(b => b.onclick = () => { S.plan.strategy = b.dataset.strat; save(); render(); });
   v.querySelectorAll("[data-mon]").forEach(b => b.onclick = () => {
     const [y, m] = (movMonth || monthKey(today())).split("-").map(Number);
@@ -869,6 +1030,7 @@ $("#startOwn").onclick = onboarding;
 /* ---------- Arranque ---------- */
 (async () => {
   S = (await loadState()) || sampleState();
+  S.recurring = S.recurring || [];
   const h = (location.hash || "").slice(1);
   if (["inicio", "deudas", "movimientos", "libertad", "perfil"].includes(h)) tab = h;
   render();
